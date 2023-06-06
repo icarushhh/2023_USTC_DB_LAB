@@ -55,7 +55,7 @@ CREATE TABLE Maintenance (
     reporter_name VARCHAR(50) DEFAULT NULL,
     fault_info VARCHAR(1000) DEFAULT NULL,
     approval_status VARCHAR(20) DEFAULT NULL,
-    person_in_charge VARCHAR(50) DEFAULT NULL,
+    person_in_charge VARCHAR(20) DEFAULT NULL,
     application_time DATETIME DEFAULT NULL,
     completion_time DATETIME DEFAULT NULL,
     FOREIGN KEY (apartment_id, room_id) REFERENCES Room(apartment_id, id),
