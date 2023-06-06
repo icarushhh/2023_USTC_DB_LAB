@@ -1,0 +1,89 @@
+{% extends 'home.html' %}
+
+{% block link %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/IO_school_manage_style.css') }}"
+      xmlns="http://www.w3.org/1999/xhtml">
+<script src="/static/js/LR_school_manage.js"></script>
+{% endblock %}
+
+{% block title %}
+学生公寓管理系统
+{% endblock %}
+
+{% block body%}
+<div class="bottom-list">
+    <button onclick="showDiv('div1','div2')">入住登记</button>
+    <button onclick="showDiv('div2','div1')">离宿管理</button>
+</div>
+
+<div class="data_block" , id="div1">
+  <div class="login-card">
+    <div class="card-header">
+        <div class="log">入住登记</div>
+    </div>
+    <form>
+        <div class="form-group">
+          <label for="ID">ID号:</label>
+          <input required="" name="ID" id="ID" type="text">
+        </div>
+        <div class="form-group">
+          <label for="name">姓名:</label>
+          <input required="" name="name" id="name" type="text">
+        </div>
+        <div class="form-group">
+          <label for="gender">性别:</label>
+          <input required="" name="gender" id="gender" type="text">
+        </div>
+          <!-- 设置成可选择的？ -->
+        <div class="form-group">
+          <label for="born">生日:</label>
+          <input required="" name="born" id="born" type="date">
+        </div>
+        <div class="form-group">
+          <label for="class">班级:</label>
+          <input required="" name="class" id="class" type="text">
+        </div>
+          <!-- 能填除自己管理的公寓之外的学生嘛？ 是否应当默认-->
+        <div class="form-group">
+          <label for="apartment_id">公寓号:</label>
+          <input required="" name="apartment_id" id="apartment_id" type="text">
+        </div>
+        <div class="form-group">
+          <label for="room_id">宿舍号:</label>
+          <input required="" name="room_id" id="room_id" type="text">
+        </div>
+        <div class="form-group">
+          <label for="college">学院:</label>
+          <input required="" name="college" id="college" type="text">
+        </div>
+        <div class="form-group">
+          <label for="id_card">身份证:</label>
+          <input required="" name="id_card" id="id_card" type="text">
+        </div>
+        <div class="form-group">
+          <label for="major">专业:</label>
+          <input required="" name="major" id="major" type="text">
+        </div>
+        <div class="form-group">
+          <input value="提交" type="submit">
+        </div>
+    </form>
+  </div>
+</div>
+<div class="data_block" , id="div2">
+  <div class="login-card">
+    <div class="card-header">
+        <div class="log">离宿登记</div>
+    </div>
+    <form>
+        <div class="form-group">
+          <label for="ID_out">ID号:</label>
+          <input required="" name="ID_out" id="ID_out" type="text">
+        </div>
+        <div class="form-group">
+          <input value="提交" type="submit">
+        </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

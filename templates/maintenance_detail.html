@@ -1,0 +1,50 @@
+{% extends 'home.html' %}
+
+{% block link %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/detail_style.css') }}"
+      xmlns="http://www.w3.org/1999/xhtml">
+{% endblock %}
+
+{% block title %}
+学生公寓管理系统
+{% endblock %}
+
+{% block body%}
+<div class="data_block">
+    <ul class="list_group">
+        <li class="list_group left">维修详情</li>
+        <li class="list_group center">
+            <!-- 怎么通过python传？ 给朱哥考虑 -->
+            <img src="/static/image/maintenance.jpg" alt="暂无图片" width="600" height="450">
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">申报时间</span>
+            <span>2023.5.31</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">申报人</span>
+            <span>陈奕晓</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">维修位置</span>
+            <span>脑子</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">联系方式</span>
+            <span>13771161706</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">处理人</span>
+            <span>阿姨</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">当前状态</span>
+            <span>等待维修</span>
+        </li>
+    </ul>
+<!--    是管理员并且状态为等待维修-->
+    {% if identity==0 and state==0 %}
+    <button>通过</button>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends 'home.html' %}
+
+{% block link %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/detail_style.css') }}"
+      xmlns="http://www.w3.org/1999/xhtml">
+{% endblock %}
+
+{% block title %}
+学生公寓管理系统
+{% endblock %}
+
+{% block body%}
+<div class="data_block">
+    <ul class="list_group">
+        <li class="list_group left">宿舍信息</li>
+        <li class="list_group right">
+            <span class="pull_left">宿舍号</span>
+            <span>402</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">社长</span>
+            <span>陈奕晓</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">学生1</span>
+            <span>A</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">学生2</span>
+            <span>B</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">学生3</span>
+            <span>C</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">学生4</span>
+            <span>D</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">状态</span>
+            <span>正常</span>
+        </li>
+    </ul>
+    <div class="bottom-list">
+    <!-- 按钮按了之后操作待做 -->
+    <button>修改</button>
+    </div>
+</div>
+{% endblock %}

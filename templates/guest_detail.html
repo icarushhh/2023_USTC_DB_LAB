@@ -1,0 +1,58 @@
+{% extends 'home.html' %}
+
+{% block link %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/detail_style.css') }}"
+      xmlns="http://www.w3.org/1999/xhtml">
+{% endblock %}
+
+{% block title %}
+学生公寓管理系统
+{% endblock %}
+
+{% block body%}
+<div class="data_block">
+    <ul class="list_group">
+        <li class="list_group left">访客信息</li>
+        <li class="list_group right">
+            <span class="pull_left">身份证</span>
+            <span>123456789</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">姓名</span>
+            <span>陈奕晓</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">类别</span>
+            <span>学生</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">手机号</span>
+            <span>13771161706</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">目的</span>
+            <span>睡觉</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">目标宿舍号</span>
+            <span>402</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">目标公寓</span>
+            <span>1栋</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">到达时间</span>
+            <span>5.12</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">离开时间</span>
+            <span>5.21</span>
+        </li>
+    </ul>
+    <div class="bottom-list">
+    <!-- 按钮按了之后操作待做 -->
+    <button>修改</button>
+    </div>
+</div>
+{% endblock %}

@@ -33,7 +33,20 @@ https://templatemo.com/tm-569-edu-meeting
   <!-- Sub Header -->
   <header class="sub-header">
     <div class="left-content" , id="top1">
-      <a class="btn" href="#">
+      {% if identity == '学生' %}
+          <a class="btn" href="/student_home">
+            <span class="icon">
+                <svg viewBox="0 0 175 80" width="40" height="40">
+                    <rect width="80" height="15" fill="#f0f0f0" rx="10"></rect>
+                    <rect y="30" width="80" height="15" fill="#f0f0f0" rx="10"></rect>
+                    <rect y="60" width="80" height="15" fill="#f0f0f0" rx="10"></rect>
+                </svg>
+            </span>
+            <span class="text">首页</span>
+          </a>
+      {% endif %}
+        {% if identity == '管理员' %}
+        <a class="btn" href="/administrator_home">
         <span class="icon">
             <svg viewBox="0 0 175 80" width="40" height="40">
                 <rect width="80" height="15" fill="#f0f0f0" rx="10"></rect>
@@ -42,12 +55,14 @@ https://templatemo.com/tm-569-edu-meeting
             </svg>
         </span>
         <span class="text">首页</span>
-    </a>
+        </a>
+        {% endif %}
     </div>
     <div class="right-content" , id="top2">
     <div class="btn">
         <!-- 学生还是管理员为变量 -->   <!-- 名字改为变量 -->
-        <span class="btn-text-one">{{ name }}</span>
+        <!-- {{name}} -->
+        <span class="btn-text-one">{{identity}}:{{username}}</span>
 
     </div>
     </div>

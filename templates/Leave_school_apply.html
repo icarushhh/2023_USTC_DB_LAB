@@ -1,0 +1,37 @@
+{% extends 'home.html' %}
+
+{% block link %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/maintenance_request_style.css') }}">
+{% endblock %}
+
+{% block title %}
+学生公寓管理系统
+{% endblock %}
+
+{% block body%}
+<div class="login-card">
+  <div class="card-header">
+    <div class="log">离校申请</div>
+  </div>
+  <form>
+    <!-- 需要日期吗？ -->
+    <div class="form-group">
+      <label for="cell-phone-number">紧急联系人:</label>
+      <input required="" name="cell-phone-number" id="cell-phone-number" type="text">
+    </div>
+    <div class="form-group">
+      <label for="area">紧急联系电话:</label>
+      <input required="" name="area" id="area" type="text">
+    </div>
+    <div class="form-group">
+      <label for="description">离校理由(不多于50字):</label>
+      <textarea class="description" rows="5" maxlength="50" required="" name="description" id="description"></textarea>
+    </div>
+    <div class="form-group">
+      <input value="提交" type="submit">
+    </div>
+
+  </form>
+</div>
+
+{% endblock %}

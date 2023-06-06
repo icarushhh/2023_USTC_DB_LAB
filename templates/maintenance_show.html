@@ -1,0 +1,27 @@
+{% extends 'home.html' %}
+
+{% block link %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/show_style.css') }}"
+      xmlns="http://www.w3.org/1999/xhtml">
+{% endblock %}
+
+{% block title %}
+学生公寓管理系统
+{% endblock %}
+<!-- 如果是学生查看，只显示自己宿舍的。如果是管理员查看，则显示全部 -->
+{% block body%}
+<div class="data_block">
+  <p class="title_left">维修记录</p>
+    <ul class="list_group">
+        {% for record in records %}
+            <li class="right">
+              <!-- content应该为‘日期 申请人 维修区域 状态’ -->
+              <span class="pull_left">{{ record.content }}</span>
+              <!-- 链接地址 -->
+              <a href="/records/{{record.address}}">查看</a>
+            </li>
+
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

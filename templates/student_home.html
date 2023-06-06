@@ -11,22 +11,22 @@
 {% block body%}
 <div class="bottom-list">
     <div class="list">
-        <a href="#">
+        <a href="/student_file">
             <button>
             <span>查看档案</span>
             </button>
         </a>
-        <a href="#">
+        <a href="/student_change">
         <button>
             <span>修改档案</span>
         </button>
         </a>
-        <a href="#">
+        <a href="/maintenance_request">
         <button>
             <span>登记维修</span>
         </button>
         </a>
-        <a href="#">
+        <a href="/maintenance_show">
         <button>
             <span>维修记录</span>
         </button>
@@ -34,13 +34,13 @@
 
         <!-- state = 1 表示学生在校 -->
         {% if state==1 %}
-        <a href="#">
+        <a href="/leave_school_apply">
         <button>
             <span>离校申请</span>
         </button>
         </a>
         {% else %}
-        <a href="#">
+        <a href="/return_school_apply">
         <button>
             <span>返校申请</span>
         </button>

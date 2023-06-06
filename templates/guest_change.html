@@ -1,0 +1,57 @@
+{% extends 'home.html' %}
+
+{% block link %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/guest_register_change_style.css') }}">
+{% endblock %}
+
+{% block title %}
+学生公寓管理系统
+{% endblock %}
+
+{% block body%}
+<!-- 在value=里面填入想初始显示的值 -->
+<div class="login-card">
+  <div class="card-header">
+    <div class="log">修改访客</div>
+  </div>
+  <form>
+    <div class="form-group">
+      <label for="ID_card">身份证:</label>
+      <input value="" required="" name="ID_card" id="ID_card" type="text">
+    </div>
+    <div class="form-group">
+      <label for="name">姓名:</label>
+      <input value="" required="" name="name" id="name" type="text">
+    </div>
+    <div class="form-group">
+      <label for="category">身份:</label>
+      <input value="" required="" name="category" id="category" type="text">
+    </div>
+    <div class="form-group">
+      <label for="cell_phone_number">手机号:</label>
+      <input value="" required="" name="cell_phone_number" id="cell_phone_number" type="text">
+    </div>
+    <div class="form-group">
+      <label for="purpose">目的:</label>
+      <input value="" required="" name="purpose" id="purpose" type="text">
+    </div>
+    <div class="form-group">
+      <label for="target_room">目的宿舍号:</label>
+      <input value="" required="" name="target_room" id="target_room" type="text">
+    </div>
+    <div class="form-group">
+      <label for="target_apartment">目的公寓号:</label>
+      <input value="" required="" name="target_apartment" id="target_apartment" type="text">
+    </div>
+    <div class="form-group">
+      <label for="departure_time">离开时间:</label>
+      <input value="" required="" name="departure_time" id="departure_time" type="text">
+    </div>
+    <div class="form-group">
+      <input value="提交" type="submit">
+    </div>
+
+  </form>
+</div>
+
+{% endblock %}

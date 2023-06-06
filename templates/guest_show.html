@@ -1,0 +1,29 @@
+{% extends 'home.html' %}
+
+{% block link %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/show_style.css') }}"
+      xmlns="http://www.w3.org/1999/xhtml">
+{% endblock %}
+
+{% block title %}
+学生公寓管理系统
+{% endblock %}
+
+{% block body%}
+<div class="data_block">
+  <p class="title_left">访客信息</p>
+    <ul class="list_group">
+        {% for record in records %}
+            <li class="right">
+              <!-- content应该为‘姓名 到访时间 目的宿舍号 离开时间’ -->
+              <!-- 筛选要做吗？ -->
+              <span class="pull_left">{{ record.content }}</span>
+              <!-- 链接地址 跳转至详情界面 -->
+              <a href="/records/{{record.address}}">查看详情</a>
+            </li>
+
+        {% endfor %}
+    </ul>
+    <button>登记访客</button>
+</div>
+{% endblock %}

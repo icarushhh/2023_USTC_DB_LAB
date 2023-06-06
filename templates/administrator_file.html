@@ -1,0 +1,49 @@
+{% extends 'home.html' %}
+
+{% block link %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/administrator_file_style.css') }}"
+      xmlns="http://www.w3.org/1999/xhtml">
+{% endblock %}
+
+{% block title %}
+学生公寓管理系统
+{% endblock %}
+
+{% block body%}
+<div class="data_block">
+    <ul class="list_group">
+        <li class="list_group left">我的档案</li>
+        <li class="list_group center">
+            <img src="/static/image/head.jpg" alt="暂无图片" width="150" height="200">
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">姓名</span>
+            <span>陈奕晓</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">性别</span>
+            <span>男</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">身份证</span>
+            <span>1234567890</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">员工号</span>
+            <span>PB20111684</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">排班</span>
+            <span>早</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">手机号</span>
+            <span>13771161706</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">负责公寓</span>
+            <span>1栋</span>
+        </li>
+    </ul>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'home.html' %}
+
+{% block link %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/show_style.css') }}"
+      xmlns="http://www.w3.org/1999/xhtml">
+{% endblock %}
+
+{% block title %}
+学生公寓管理系统
+{% endblock %}
+
+{% block body%}
+<div class="data_block">
+  <p class="title_left">宿舍信息</p>
+    <ul class="list_group">
+        {% for record in records %}
+            <li class="right">
+              <!-- content应该为‘宿舍号 社长 维修状态 已住人数’ -->
+              <span class="pull_left">{{ record.content }}</span>
+              <!-- 链接地址 -->
+              <a href="/records/{{record.address}}">查看</a>
+            </li>
+
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

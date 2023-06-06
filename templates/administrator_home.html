@@ -1,0 +1,60 @@
+{% extends 'home.html' %}
+
+{% block link %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/administrator_home_style.css') }}">
+{% endblock %}
+
+{% block title %}
+学生公寓管理系统
+{% endblock %}
+
+{% block body%}
+<div class="button-list">
+    <div class="list">
+        <a href="#">
+            <button>
+            <span>入住/离宿登记</span>
+            </button>
+        </a>
+        <a href="#">
+        <button>
+            <span>暂离/返校登记</span>
+        </button>
+        </a>
+        <a href="#">
+        <button>
+            <span>修改自身档案</span>
+        </button>
+        </a>
+        <a href="#">
+        <button>
+            <span>查看/修改学生档案</span>
+        </button>
+        </a>
+    </div>
+    <div class="list">
+        <a href="#">
+        <button>
+            <!-- 是否可以增加一个标志来显示是否有新增维修请求？ -->
+            <span>查看维修记录</span>
+        </button>
+        </a>
+        <a href="#">
+            <button>
+            <span>登记/修改访客</span>
+            </button>
+        </a>
+        <a href="#">
+        <button>
+            <span>查看/修改宿舍信息</span>
+        </button>
+        </a>
+        <a href="#">
+        <button>
+            <span>查看自身信息</span>
+        </button>
+        </a>
+
+    </div>
+</div>
+{% endblock %}

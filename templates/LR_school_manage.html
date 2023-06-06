@@ -1,0 +1,47 @@
+{% extends 'home.html' %}
+
+{% block link %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/LR_school_manage_style.css') }}"
+      xmlns="http://www.w3.org/1999/xhtml">
+<script src="/static/js/LR_school_manage.js"></script>
+{% endblock %}
+
+{% block title %}
+学生公寓管理系统
+{% endblock %}
+
+{% block body%}
+<div class="bottom-list">
+    <button onclick="showDiv('div1','div2')">返校申请管理</button>
+    <button onclick="showDiv('div2','div1')">离校申请管理</button>
+</div>
+
+<div class="data_block" , id="div1">
+  <p class="title_left">返校申请管理</p>
+    <ul class="list_group">
+        {% for record in records1 %}
+            <li class="right">
+              <!-- content应该为‘日期 申请人’ -->
+              <span class="pull_left">{{ record.content }}</span>
+              <!-- 链接地址 -->
+              <a href="/records/{{record.address}}">查看</a>
+            </li>
+
+        {% endfor %}
+    </ul>
+</div>
+<div class="data_block" , id="div2">
+  <p class="title_left">离校申请管理</p>
+    <ul class="list_group">
+        {% for record in records2 %}
+            <li class="right">
+              <!-- content应该为‘日期 申请人’ -->
+              <span class="pull_left">{{ record.content }}</span>
+              <!-- 链接地址 -->
+              <a href="/records/{{record.address}}">查看</a>
+            </li>
+
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
