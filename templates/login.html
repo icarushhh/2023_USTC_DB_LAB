@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>学生公寓管理系统登录界面</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/login_style.css') }}">
+
+</head>
+<body>
+  <div class="login-box">
+    <p>学生公寓管理系统</p>
+    <form>
+      <div class="user-box">
+        <input required="" name="" type="text">
+        <label>用户名</label>
+      </div>
+      <div class="user-box">
+        <input required="" name="" type="password">
+        <label>密码</label>
+      </div>
+      <div class="bottom-block">
+        <div class="block-left">
+          <!-- 判断是否能登录后 做个跳转操作 -->
+          <a href="#">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <p>登录</p>
+          </a>
+        </div>
+        <!-- 选择学生还是老师的按钮 -->
+        <label class="radio-button">
+          <input value="option1" name="example-radio" type="radio">
+          <span class="radio"></span>
+          学生
+        </label>
+
+        <label class="radio-button">
+          <input value="option2" name="example-radio" type="radio">
+          <span class="radio"></span>
+          管理员
+        </label>
+      </div>
+
+
+    </form>
+  </div>
+</body>
+</html>

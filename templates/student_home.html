@@ -1,0 +1,51 @@
+{% extends 'home.html' %}
+
+{% block link %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/student_home_style.css') }}">
+{% endblock %}
+
+{% block title %}
+学生公寓管理系统
+{% endblock %}
+
+{% block body%}
+<div class="bottom-list">
+    <div class="list">
+        <a href="#">
+            <button>
+            <span>查看档案</span>
+            </button>
+        </a>
+        <a href="#">
+        <button>
+            <span>修改档案</span>
+        </button>
+        </a>
+        <a href="#">
+        <button>
+            <span>登记维修</span>
+        </button>
+        </a>
+        <a href="#">
+        <button>
+            <span>维修记录</span>
+        </button>
+        </a>
+
+        <!-- state = 1 表示学生在校 -->
+        {% if state==1 %}
+        <a href="#">
+        <button>
+            <span>离校申请</span>
+        </button>
+        </a>
+        {% else %}
+        <a href="#">
+        <button>
+            <span>返校申请</span>
+        </button>
+        </a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
