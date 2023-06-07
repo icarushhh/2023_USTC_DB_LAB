@@ -4,7 +4,7 @@ import pymysql  # 引入pymssql模块
 
 server = "localhost"  # 服务器名
 user = "root"  # 用户名
-password = "ZSZ1103753519123"  # 密码
+password = ""  # 密码
 database = "Lab1"  # 数据库名
 
 connection = pymysql.connect(host=server,
