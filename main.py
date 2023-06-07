@@ -160,7 +160,7 @@ def maintenance_show():
 
 
 # 查看第index个维修记录
-# 如果是管理员，则还要处理上传的修改状态
+# 如果是管理员，则还要处理上传的修改状态 该功能还未搞定
 @app.route('/maintenance_detail/<int:index>', methods=['GET', 'POST'])
 def maintenance_detail(index):
     # TODO 若维修list不存在，index小于0或大于维修list的长度，则返回maintenance_show界面
