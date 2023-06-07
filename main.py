@@ -27,7 +27,7 @@ except:
 connection.close()  # 关闭数据库连接
 
 app = Flask(__name__)
-app.secret_key = '!As13771545222'
+app.secret_key = 'hello'
 
 
 # TODO 设计一个学生类
@@ -35,6 +35,7 @@ app.secret_key = '!As13771545222'
 # TODO 设计一个管理员类
 
 # TODO 设计一个维修类
+
 
 # 初始化未登录
 @app.before_request
@@ -75,6 +76,7 @@ def login():
     return render_template('login.html')
 
 
+# 需要参数为username和identity，用以表示身份和姓名
 @app.route('/student_home')
 def student_home():
     # TODO state表示是否已经登录
@@ -85,6 +87,7 @@ def student_home():
     return render_template('student_home.html', username=username, identity=identity)
 
 
+# 需要学生类作为参数，包含学生的一切属性
 @app.route('/student_file')
 def student_file():
     # TODO state表示是否已经登录
@@ -95,6 +98,7 @@ def student_file():
     return render_template('student_file.html', username=username, identity=identity)
 
 
+# 需要学生类？（给输入框初始值）
 @app.route('/student_change', methods=['POST', 'GET'])
 def student_change():
     # TODO state表示是否已经登录
@@ -112,6 +116,7 @@ def student_change():
     return render_template('student_change.html', username=username, identity=identity)
 
 
+# 需要参数为username和identity，用以表示身份和姓名
 @app.route('/maintenance_request')
 def maintenance_request():
     # TODO state表示是否已经登录
@@ -129,15 +134,54 @@ def maintenance_request():
     return render_template('maintenance_request.html', username=username, identity=identity)
 
 
-@app.route('/maintenance_detail')
-def maintenance_detail():
+# 示例用类
+class Record:
+    def __init__(self, content, address):
+        self.content = content
+        self.address = address
+
+
+# 需要一个维修类的list,如果是学生查看，只显示自己宿舍的。如果是管理员查看，则显示全部；username和identity，用以表示身份和姓名
+@app.route('/maintenance_show')
+def maintenance_show():
     # TODO state表示是否已经登录
     if session['state'] is None:
         return redirect('/')
-    # TODO 传入一个list，包含维修类
+    # TODO 写一个函数，要求：如果是学生查看，只显示自己宿舍的。如果是管理员查看，则显示全部
+    #  返回符合要求的维修记录list,并存到全局变量session中去
+    records = []
+    for i in range(0, 50):
+        record = Record(i, i)
+        records.append(record)
+
     username = session['username']
     identity = session['identity']
-    return render_template('maintenance_detail.html', username=username, identity=identity)
+    return render_template('maintenance_show.html', username=username, identity=identity, records=records)
+
+
+# 查看第index个维修记录
+# 如果是管理员，则还要处理上传的修改状态
+@app.route('/maintenance_detail/<int:index>', methods=['GET', 'POST'])
+def maintenance_detail(index):
+    # TODO 若维修list不存在，index小于0或大于维修list的长度，则返回maintenance_show界面
+    if index < 0:
+        return redirect('/maintenance_show')
+
+    # TODO state表示是否已经登录
+    if session['state'] is None:
+        return redirect('/')
+    # TODO 通过index获取指定维修记录，并传入render_template
+    status = 0
+    # TODO 获取修改的状态
+    if request.method == 'POST':
+        # TODO 在这里将修改后的状态传回数据库
+        status = request.json.get('status')
+        print(status)
+
+    username = session['username']
+    identity = session['identity']
+
+    return render_template('maintenance_detail.html', username=username, identity=identity, status=status)
 
 
 @app.route('/administrator_home')
@@ -148,7 +192,6 @@ def administrator_home():
     username = session['username']
     identity = session['identity']
     return render_template('administrator_home.html', username=username, identity=identity)
-
 
 # 按间距中的绿色按钮以运行脚本。
 if __name__ == '__main__':
