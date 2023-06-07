@@ -114,6 +114,13 @@ END //
 DELIMITER ;
 
 DELIMITER //
+CREATE PROCEDURE get_manager_info(IN manager_id VARCHAR(20))
+BEGIN
+    SELECT id, name, gender, apartment_id, id_card, phone, schedule, photo FROM Manager WHERE id = manager_id;
+END //
+DELIMITER ;
+
+DELIMITER //
 CREATE PROCEDURE update_manager_phone(IN manager_id VARCHAR(20), IN new_phone VARCHAR(15))
 BEGIN
     UPDATE Manager SET phone = new_phone WHERE id = manager_id;
@@ -172,7 +179,7 @@ END //
 DELIMITER ;
 
 DELIMITER //
-CREATE PROCEDURE report_maintenance(IN student_id VARCHAR(20), IN student_name VARCHAR(50), IN ro_id VARCHAR(20), IN apart_id VARCHAR(20), IN fault_in VARCHAR(1000), IN fault_photo MEDIUMBLOB)
+CREATE PROCEDURE report_maintenance(IN student_id VARCHAR(20), IN ro_id VARCHAR(20), IN apart_id VARCHAR(20), IN fault_in VARCHAR(1000), IN fault_photo MEDIUMBLOB)
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
@@ -181,7 +188,7 @@ BEGIN
     END;
 
     START TRANSACTION;
-    INSERT INTO Maintenance (room_id, apartment_id, reporter_id, reporter_name, fault_info, approval_status, application_time) VALUES (ro_id, apart_id, student_id, student_name, fault_in, 'Pending', NOW());
+    INSERT INTO Maintenance (room_id, apartment_id, reporter_id, fault_info, approval_status, application_time) VALUES (ro_id, apart_id, student_id, fault_in, 'Pending', NOW());
     INSERT INTO MaintenancePhotos (maintenance_id, photo) VALUES (LAST_INSERT_ID(), fault_photo);
     COMMIT;
 END //
@@ -269,24 +276,20 @@ DELIMITER ;
 DELIMITER //
 CREATE PROCEDURE apply_for_leave(IN student_id VARCHAR(20), IN leave_time DATETIME, IN expected_return_time DATETIME, IN purpose VARCHAR(1000), IN destination VARCHAR(1000))
 BEGIN
-    DECLARE student_name VARCHAR(50);
     DECLARE room_id VARCHAR(20);
     DECLARE apartment_id VARCHAR(20);
-    DECLARE student_phone VARCHAR(15);
-    SELECT name, room_id, apartment_id, phone INTO student_name, room_id, apartment_id, student_phone FROM Student WHERE id = student_id;
-    INSERT INTO LeaveApplication (student_id, student_name, room_id, apartment_id, leave_time, expected_return_time, approval_status, purpose, destination, phone) VALUES (student_id, student_name, room_id, apartment_id, leave_time, expected_return_time, 'Pending', purpose, destination, student_phone);
+    SELECT room_id, apartment_id INTO room_id, apartment_id FROM Student WHERE id = student_id;
+    INSERT INTO LeaveApplication (student_id, room_id, apartment_id, leave_time, expected_return_time, approval_status, purpose, destination) VALUES (student_id, room_id, apartment_id, leave_time, expected_return_time, 'Pending', purpose, destination);
 END //
 DELIMITER ;
 
 DELIMITER //
 CREATE PROCEDURE apply_for_return(IN student_id VARCHAR(20), IN return_time DATETIME)
 BEGIN
-    DECLARE student_name VARCHAR(50);
     DECLARE room_id VARCHAR(20);
     DECLARE apartment_id VARCHAR(20);
-    DECLARE student_phone VARCHAR(15);
-    SELECT name, room_id, apartment_id, phone INTO student_name, room_id, apartment_id, student_phone FROM Student WHERE id = student_id;
-    INSERT INTO ReturnApplication (student_id, student_name, room_id, apartment_id, return_time, approval_status, phone) VALUES (student_id, student_name, room_id, apartment_id, return_time, 'Pending', student_phone);
+    SELECT room_id, apartment_id INTO room_id, apartment_id FROM Student WHERE id = student_id;
+    INSERT INTO ReturnApplication (student_id, room_id, apartment_id, return_time, approval_status) VALUES (student_id, room_id, apartment_id, return_time, 'Pending');
 END //
 DELIMITER ;
 
@@ -346,4 +349,103 @@ BEGIN
         SET result = 'Login successful.';
     END IF;
 END; //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE update_visitor(
+    IN iden_card VARCHAR(50), 
+    IN new_name VARCHAR(50), 
+    IN new_category VARCHAR(20), 
+    IN new_phone VARCHAR(15), 
+    IN new_purpose VARCHAR(1000), 
+    IN new_target_room VARCHAR(20), 
+    IN new_target_apartment VARCHAR(20), 
+    IN new_departure_time DATETIME)
+BEGIN
+    UPDATE Visitor 
+    SET 
+        name = new_name, 
+        category = new_category, 
+        phone = new_phone, 
+        purpose = new_purpose, 
+        target_room = new_target_room, 
+        target_apartment = new_target_apartment, 
+        departure_time = new_departure_time 
+    WHERE id_card = iden_card;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE delete_visitor(IN iden_card VARCHAR(50))
+BEGIN
+    DELETE FROM Visitor WHERE id_card = iden_card;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE get_leave_applications(IN student_id_in VARCHAR(20))
+BEGIN
+    SELECT 
+        LeaveApplication.id, 
+        LeaveApplication.student_id, 
+        Student.name, 
+        Student.phone, 
+        LeaveApplication.room_id, 
+        LeaveApplication.apartment_id, 
+        LeaveApplication.leave_time, 
+        LeaveApplication.expected_return_time, 
+        LeaveApplication.purpose, 
+        LeaveApplication.destination, 
+        LeaveApplication.approval_status
+    FROM 
+        LeaveApplication
+    JOIN 
+        Student ON LeaveApplication.student_id = Student.id
+    WHERE 
+        LeaveApplication.student_id = student_id_in;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE get_return_applications(IN student_id_in VARCHAR(20))
+BEGIN
+    SELECT 
+        ReturnApplication.id, 
+        ReturnApplication.student_id, 
+        Student.name, 
+        Student.phone, 
+        ReturnApplication.room_id, 
+        ReturnApplication.apartment_id, 
+        ReturnApplication.return_time, 
+        ReturnApplication.approval_status
+    FROM 
+        ReturnApplication
+    JOIN 
+        Student ON ReturnApplication.student_id = Student.id
+    WHERE 
+        ReturnApplication.student_id = student_id_in;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE get_apartment_maintenance(IN stud_id VARCHAR(20))
+BEGIN
+    SELECT 
+        Maintenance.id, 
+        Maintenance.room_id, 
+        Maintenance.apartment_id, 
+        Maintenance.reporter_id, 
+        Student.name AS reporter_name, 
+        Maintenance.fault_info, 
+        Maintenance.approval_status, 
+        Maintenance.person_in_charge, 
+        Maintenance.application_time, 
+        Maintenance.completion_time
+    FROM 
+        Maintenance
+    JOIN 
+        Student ON Maintenance.reporter_id = Student.id
+    WHERE 
+        Maintenance.apartment_id = (SELECT apartment_id FROM Student WHERE id = stud_id);
+END //
 DELIMITER ;

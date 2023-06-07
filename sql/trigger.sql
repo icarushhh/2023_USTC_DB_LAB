@@ -1,3 +1,4 @@
+/*
 SET GLOBAL event_scheduler = ON;
 
 DELIMITER //
@@ -15,7 +16,7 @@ BEGIN
     );
 END; //
 DELIMITER ;
-
+*/
 DELIMITER //
 CREATE TRIGGER update_completion_time
 AFTER UPDATE ON Maintenance
