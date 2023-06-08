@@ -3,7 +3,7 @@ import pymysql
 # connect to database
 server = "localhost"  # 服务器名
 user = "root"  # 用户名
-password = ""  # 密码
+password = "ZSZ1103753519123"  # 密码
 database = "student_apartment"  # 数据库名
 
 connection = pymysql.connect(host=server,
@@ -66,6 +66,9 @@ def update_student_info(id, phone, email, password, photo):
 
 
 def report_maintenance(student_id, description, photo):
+    """
+    report a maintenance
+    """
     record = get_student_info(student_id)
     reporter = Student(record)
 
@@ -81,16 +84,16 @@ class Admin(object):
     Store the info of a administrator
     """
 
-    def __init__(self, student_record):
-        self.id = student_record[0]
-        self.gender = student_record[1]
-        self.name = student_record[2]
-        self.id_card = student_record[3]
-        self.phone = student_record[4]
-        self.apartment_id = student_record[5]
-        self.schedule = student_record[6]
-        self.password = student_record[7]
-        self.photo = student_record[8]
+    def __init__(self, admin_record):
+        self.id = admin_record[0]
+        self.gender = admin_record[1]
+        self.name = admin_record[2]
+        self.id_card = admin_record[3]
+        self.phone = admin_record[4]
+        self.apartment_id = admin_record[5]
+        self.schedule = admin_record[6]
+        self.password = admin_record[7]
+        self.photo = admin_record[8]
 
 
 def get_admin_info(admin_id):
@@ -106,3 +109,59 @@ def get_admin_info(admin_id):
     record = cursor.fetchone()
 
     return record
+
+
+class Record(object):
+    """
+    Store the info of a maintenance record
+    """
+
+    def __init__(self, maintenance_record):
+        self.id = maintenance_record[0]
+        self.room_id = maintenance_record[1]
+        self.apartment_id = maintenance_record[2]
+        self.reporter_id = maintenance_record[3]
+        self.fault_info = maintenance_record[4]
+        self.status = maintenance_record[5]
+        self.person_in_charge = maintenance_record[6]
+        self.report_time = maintenance_record[7]
+        self.finish_time = maintenance_record[8]
+        self.photo_data = maintenance_record[9]
+        self.reporter_name = maintenance_record[10]
+
+
+def get_stu_view_records(student_id):
+    """
+    student view of maintenance records, return a list of Record class
+    """
+
+    args = (student_id,)
+    cursor.callproc('get_apartment_maintenance_student', args)
+    records = cursor.fetchall()
+
+    result = []
+
+    for record in records:
+        tmp = Record(record)
+        result.append(tmp)
+
+    return result
+
+
+def get_admin_view_records():
+    """
+    administrator view of maintenance records, return a list of Record class
+    """
+
+    args = ()
+    cursor.callproc('get_apartment_maintenance_student', args)
+    records = cursor.fetchall()
+
+    result = []
+
+    for record in records:
+        tmp = Record(record)
+        result.append(tmp)
+
+    return result
+

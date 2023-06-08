@@ -31,7 +31,8 @@ DELIMITER ;
 DELIMITER //
 CREATE PROCEDURE get_student_info(IN student_id VARCHAR(20))
 BEGIN
-    SELECT id, name, gender, born, class, apartment_id, room_id, college, id_card, domicile, phone, email, major, state, photo FROM Student WHERE id = student_id;
+    SELECT id, name, gender, born, class, apartment_id, room_id, college, id_card, domicile, phone, email, major, password, 
+    state, photo FROM Student WHERE id = student_id;
 END //
 DELIMITER ;
 
@@ -328,27 +329,51 @@ END //
 DELIMITER ;
 
 DELIMITER //
-CREATE PROCEDURE get_apartment_maintenance(IN stud_id VARCHAR(20))
+CREATE PROCEDURE get_apartment_maintenance_student(IN stud_id VARCHAR(20))
 BEGIN
     SELECT 
         Maintenance.id, 
         Maintenance.room_id, 
         Maintenance.apartment_id, 
         Maintenance.reporter_id, 
-        Student.name AS reporter_name, 
         Maintenance.fault_info, 
         Maintenance.approval_status, 
         Maintenance.person_in_charge, 
         Maintenance.application_time, 
         Maintenance.completion_time,
-        MaintenancePhotos.photo
+        MaintenancePhotos.photo,
+        Student.name AS reporter_name
     FROM 
         Maintenance
     JOIN 
-        Student ON Maintenance.reporter_id = Student.id
+         Student ON Maintenance.reporter_id = Student.id
     LEFT JOIN
         MaintenancePhotos ON Maintenance.id = MaintenancePhotos.maintenance_id
     WHERE 
         Maintenance.apartment_id = (SELECT apartment_id FROM Student WHERE id = stud_id) AND Maintenance.room_id = (SELECT room_id FROM Student WHERE id = stud_id);
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE get_apartment_maintenance_administrator()
+BEGIN
+    SELECT 
+        Maintenance.id, 
+        Maintenance.room_id, 
+        Maintenance.apartment_id, 
+        Maintenance.reporter_id, 
+        Maintenance.fault_info, 
+        Maintenance.approval_status, 
+        Maintenance.person_in_charge, 
+        Maintenance.application_time, 
+        Maintenance.completion_time,
+        MaintenancePhotos.photo,
+        Student.name AS reporter_name
+    FROM 
+        Maintenance
+    JOIN 
+         Student ON Maintenance.reporter_id = Student.id
+    LEFT JOIN
+        MaintenancePhotos ON Maintenance.id = MaintenancePhotos.maintenance_id;
 END //
 DELIMITER ;

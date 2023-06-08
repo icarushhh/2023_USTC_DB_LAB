@@ -86,6 +86,7 @@ def student_file():
         record = get_admin_info(ID)
         user = Admin(record)
     # TODO read from the database and show info on the page
+    #  其中user 是一个学生类或一个管理员类，这两个类属性见mylib.py
 
     return render_template('student_file.html', username=username, identity=identity)
 
@@ -145,29 +146,39 @@ def maintenance_request():
 
 
 # 示例用类
-class Record:
-    def __init__(self, content, address):
-        self.content = content
+class Record_for_show:
+    def __init__(self, time, reporter, status, address):
+        self.content = "申请时间：" + str(time) + "  申请人：" + reporter + "  状态：" + status
         self.address = address
 
 
 # 需要一个维修类的list,如果是学生查看，只显示自己宿舍的。如果是管理员查看，则显示全部；username和identity，用以表示身份和姓名
-# 传入的数据需要有两个属性：1.想要显示的数据‘日期 申请人 维修区域 状态’ 2.在list中的编号
+# 传入的数据需要有两个属性：1.想要显示的数据‘日期 申请人 状态’ 2.在table中的编号
 @app.route('/maintenance_show')
 def maintenance_show():
     # TODO state表示是否已经登录
     if session['state'] is None:
         return redirect('/')
-    # TODO 写一个函数，要求：如果是学生查看，只显示自己宿舍的。如果是管理员查看，则显示全部
-    #  返回符合要求的维修记录list,并存到全局变量session中去
-    records = []
-    for i in range(0, 50):
-        record = Record(i, i)
-        records.append(record)
-
     username = session['username']
     identity = session['identity']
-    return render_template('maintenance_show.html', username=username, identity=identity, records=records)
+    ID = session['ID']
+    # TODO 写一个函数，要求：如果是学生查看，只显示自己宿舍的。如果是管理员查看，则显示全部
+    #  返回符合要求的维修记录list,并存到全局变量session中去
+
+    records_for_show = []        # 这个列表里存放 Record_for_show 类
+    if identity == "学生":
+        records = get_stu_view_records(ID)      # records 是完整的记录列表, 其中存放Record类
+        for record in records:
+            tmp = Record_for_show(record.report_time, record.reporter_name, record.status, record.id)
+            records_for_show.append(tmp)
+
+    elif identity == "管理员":
+        records = get_admin_view_records()  # records 是完整的记录列表, 其中存放Record类
+        for record in records:
+            tmp = Record_for_show(record.report_time, record.reporter_name, record.status, record.id)
+            records_for_show.append(tmp)
+
+    return render_template('maintenance_show.html', username=username, identity=identity, records=records_for_show)
 
 
 # TODO 改成维修类的变量
@@ -187,6 +198,7 @@ def maintenance_detail(index):
         return redirect('/')
     # TODO 通过index获取指定维修记录，并传入render_template
     #  status表维修状态，在此用于演示
+
     global status
     # 表示已经维修完成
     if request.method == 'POST':
@@ -284,7 +296,7 @@ def LR_school_manage():
     # 演示用
     records = []
     for i in range(0, 50):
-        record = Record(i, i)
+        record = Record_for_show(i, i)
         records.append(record)
 
     username = session['username']
@@ -413,7 +425,7 @@ def student_show():
     # 演示用
     records = []
     for i in range(0, 50):
-        record = Record(i, i)
+        record = Record_for_show(i, i)
         records.append(record)
 
     username = session['username']
@@ -431,7 +443,7 @@ def guest_show():
     # 演示用
     records = []
     for i in range(0, 50):
-        record = Record(i, i)
+        record = Record_for_show(i, i)
         records.append(record)
 
     username = session['username']
@@ -505,7 +517,7 @@ def room_show():
     # 演示用
     records = []
     for i in range(0, 50):
-        record = Record(i, i)
+        record = Record_for_show(i, i)
         records.append(record)
 
     username = session['username']

@@ -8,7 +8,7 @@ VALUES ('402', 'W1', 4, 0, 'PB20111683', 'Accept');
 
 -- Insert into Manager
 INSERT INTO Manager (id, gender, name, id_card, phone, apartment_id, schedule, password) 
-VALUES ('M100203', 'Male', 'John Doe', '123456789', '1234567890', 'W1', '9am-5pm', '123456');
+VALUES ('AD01', 'Male', 'John Doe', '123456789', '1234567890', 'W1', '9am-5pm', '123456');
 
 -- Insert into Student
 INSERT INTO Student (id, name, gender, born, class, apartment_id, room_id, college, id_card, domicile, phone, email, major, password, state) 
