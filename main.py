@@ -1,7 +1,6 @@
 from flask import Flask, request, render_template, redirect, url_for, session
 from mylib import *
 
-
 app = Flask(__name__)
 app.secret_key = 'hello'
 
@@ -39,16 +38,25 @@ def login():
                 user = Student(record)
                 session['ID'] = ID
                 session['identity'] = identity
+                session['username'] = user.name
+            except:
+                print("user name doesn't exist")
+        elif identity == '管理员':
+            try:
+                record = get_admin_info(ID)
+                user = Admin(record)
+                session['ID'] = ID
+                session['identity'] = identity
+                session['username'] = user.name
             except:
                 print("user name doesn't exist")
 
-
-         # TODO 改成判断函数
-        if ID == user.id and password == user.passward and identity == '学生':
+        # TODO 改成判断函数
+        if ID == user.id and password == user.password and identity == '学生':
             # TODO 登录状态改为已登录
             session['state'] = 1
             return redirect(url_for('student_home'))
-        elif ID == 'PB20111684' and password == 'As13771545222' and identity == '管理员':
+        elif ID == user.id and password == user.password and identity == '管理员':
             session['state'] = 1
             return redirect('/administrator_home')
         # 如果输错了 咋办 先不管他
