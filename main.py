@@ -83,6 +83,15 @@ def student_file():
         return redirect('/')
     username = session['username']
     identity = session['identity']
+    ID = session['ID']
+
+    if identity == '学生':
+        record = get_student_info(ID)
+        user = Student(record)
+    elif identity == '管理员':
+        record = get_admin_info(ID)
+        user = Admin(record)
+
     return render_template('student_file.html', username=username, identity=identity)
 
 
@@ -97,6 +106,8 @@ def student_change():
     if request.method == 'POST':
         # example
         cell_phone_number = request.form.get('cell_phone_number')
+        email = request.form.get('email')
+        password = request.form.get('password')
         head = request.files.get('head')
 
     username = session['username']

@@ -1,8 +1,9 @@
 import pymysql
 
+# connect to database
 server = "localhost"  # 服务器名
 user = "root"  # 用户名
-password = ""  # 密码
+password = "ZSZ1103753519123"  # 密码
 database = "student_apartment"  # 数据库名
 
 connection = pymysql.connect(host=server,
@@ -43,13 +44,14 @@ def get_student_info(student_id):
     :return: record of the student
     """
 
-    sql = "SELECT id, name, gender, born, class, apartment_id, room_id, " \
-          "college, id_card, domicile, phone, email, major, password, state, photo " \
-          f"FROM Student WHERE id = '{student_id}'"
-    cursor.execute(sql)
-    # print(f"\'{student_id}\'")
-    # cursor.callproc('get_student_info', "\'PB20111683\'")
+    # sql = "SELECT id, name, gender, born, class, apartment_id, room_id, " \
+    #       "college, id_card, domicile, phone, email, major, password, state, photo " \
+    #       f"FROM Student WHERE id = '{student_id}'"
+    # cursor.execute(sql)
+    args = (student_id, )
+    cursor.callproc('get_student_info', args)
     record = cursor.fetchone()
+    print(record)
     return record
 
 
