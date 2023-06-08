@@ -9,9 +9,6 @@ import numpy as np
 app = Flask(__name__)
 app.secret_key = 'hello'
 
-
-# TODO 设计一个管理员类
-
 # TODO 设计一个维修类
 
 
@@ -29,10 +26,6 @@ def login():
     # 参数对应html文件中input框中的name
 
     if request.method == 'POST':
-        # print(g.user_name)
-        # TODO 在这里插入函数，判断输入的是否在数据库中，
-        #  然后将用户资料传入session这个全局变量中,以便后续使用
-        #  session是一个基于cookie保存的字典
         ID = request.form.get('ID')
         password = request.form.get('password')
         identity = request.form.get('identity')
@@ -56,9 +49,7 @@ def login():
             except:
                 print("user name doesn't exist")
 
-        # TODO 改成判断函数
         if ID == user.id and password == user.password and identity == '学生':
-            # TODO 登录状态改为已登录
             session['state'] = 1
             return redirect(url_for('student_home'))
         elif ID == user.id and password == user.password and identity == '管理员':
@@ -72,7 +63,6 @@ def login():
 # 需要参数为username和identity，用以表示身份和姓名
 @app.route('/student_home')
 def student_home():
-    # TODO state表示是否已经登录
     if session['state'] is None:
         return redirect('/')
     username = session['username']
@@ -83,7 +73,6 @@ def student_home():
 # 需要学生类作为参数，包含学生的一切属性
 @app.route('/student_file')
 def student_file():
-    # TODO state表示是否已经登录
     if session['state'] is None:
         return redirect('/')
     username = session['username']
@@ -96,6 +85,7 @@ def student_file():
     elif identity == '管理员':
         record = get_admin_info(ID)
         user = Admin(record)
+    # TODO read from the database and show info on the page
 
     return render_template('student_file.html', username=username, identity=identity)
 
@@ -103,11 +93,8 @@ def student_file():
 # 需要学生类？（给输入框初始值）
 @app.route('/student_change', methods=['POST', 'GET'])
 def student_change():
-    # TODO state表示是否已经登录
     if session['state'] is None:
         return redirect('/')
-    # TODO 通过 request.form.get 函数获取数据 然后存到数据库中
-    #  request.files.get 用以获取文件
     ID = session['ID']
     username = session['username']
     identity = session['identity']
@@ -119,8 +106,8 @@ def student_change():
         password = request.form.get('password')
         photo = request.files.get('head')
 
-        photo.save("upload.jpg")
-        with open("upload.jpg", 'rb') as f:
+        photo.save("stu_change_upload.jpg")
+        with open("stu_change_upload.jpg", 'rb') as f:
             photo_data = f.read()
         update_student_info(ID, cell_phone_number, email, password, photo_data)
 
@@ -133,13 +120,14 @@ def student_change():
 
 
 # 需要参数为username和identity，用以表示身份和姓名
-@app.route('/maintenance_request')
+@app.route('/maintenance_request', methods=["POST", "GET"])
 def maintenance_request():
-    # TODO state表示是否已经登录
     if session['state'] is None:
         return redirect('/')
-    # TODO 通过 request.form.get 函数获取数据 然后存到数据库中
-    #  request.files.get 用以获取文件
+    ID = session['ID']
+    username = session['username']
+    identity = session['identity']
+    # TODO 表单提交的电话和维修区域在数据库中没有
     if request.method == 'POST':
         # example
         cell_phone_number = request.form.get('cell_phone_number')
@@ -147,8 +135,12 @@ def maintenance_request():
         description = request.form.get('description')
         photo = request.files.get('pic')
 
-    username = session['username']
-    identity = session['identity']
+        photo.save("maintain_upload.jpg")
+        with open("maintain_upload.jpg", 'rb') as f:
+            photo_data = f.read()
+
+        report_maintenance(ID, description, photo_data)
+
     return render_template('maintenance_request.html', username=username, identity=identity)
 
 

@@ -48,7 +48,7 @@ def get_student_info(student_id):
     #       "college, id_card, domicile, phone, email, major, password, state, photo " \
     #       f"FROM Student WHERE id = '{student_id}'"
     # cursor.execute(sql)
-    args = (student_id, )
+    args = (student_id,)
     cursor.callproc('get_student_info', args)
     record = cursor.fetchone()
     return record
@@ -60,6 +60,17 @@ def update_student_info(id, phone, email, password, photo):
     """
     args = (id, photo, phone, email, password)
     cursor.callproc('update_student_info', args)
+    connection.commit()
+
+    return
+
+
+def report_maintenance(student_id, description, photo):
+    record = get_student_info(student_id)
+    reporter = Student(record)
+
+    args = (student_id, reporter.room_id, reporter.apartment_id, description, photo)
+    cursor.callproc('report_maintenance', args)
     connection.commit()
 
     return
