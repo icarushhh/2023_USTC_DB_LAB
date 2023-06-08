@@ -31,7 +31,8 @@ DELIMITER ;
 DELIMITER //
 CREATE PROCEDURE get_student_info(IN student_id VARCHAR(20))
 BEGIN
-    SELECT id, name, gender, born, class, apartment_id, room_id, college, id_card, domicile, phone, email, major, state, photo FROM Student WHERE id = student_id;
+    SELECT id, name, gender, born, class, apartment_id, room_id, college, id_card, domicile, phone, email, major, password, 
+    state, photo FROM Student WHERE id = student_id;
 END //
 DELIMITER ;
 

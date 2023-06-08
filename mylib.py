@@ -3,7 +3,7 @@ import pymysql
 # connect to database
 server = "localhost"  # 服务器名
 user = "root"  # 用户名
-password = "ZSZ1103753519123"  # 密码
+password = ""  # 密码
 database = "student_apartment"  # 数据库名
 
 connection = pymysql.connect(host=server,
@@ -51,8 +51,18 @@ def get_student_info(student_id):
     args = (student_id, )
     cursor.callproc('get_student_info', args)
     record = cursor.fetchone()
-    print(record)
     return record
+
+
+def update_student_info(id, phone, email, password, photo):
+    """
+    in page student_change, update student info
+    """
+    args = (id, photo, phone, email, password)
+    cursor.callproc('update_student_info', args)
+    connection.commit()
+
+    return
 
 
 class Admin(object):

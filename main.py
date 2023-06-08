@@ -1,5 +1,10 @@
 from flask import Flask, request, render_template, redirect, url_for, session
 from mylib import *
+from PIL import Image
+import io
+from werkzeug.datastructures import FileStorage
+import matplotlib.pyplot as plt
+import numpy as np
 
 app = Flask(__name__)
 app.secret_key = 'hello'
@@ -103,15 +108,27 @@ def student_change():
         return redirect('/')
     # TODO 通过 request.form.get 函数获取数据 然后存到数据库中
     #  request.files.get 用以获取文件
+    ID = session['ID']
+    username = session['username']
+    identity = session['identity']
+
     if request.method == 'POST':
         # example
         cell_phone_number = request.form.get('cell_phone_number')
         email = request.form.get('email')
         password = request.form.get('password')
-        head = request.files.get('head')
+        photo = request.files.get('head')
 
-    username = session['username']
-    identity = session['identity']
+        photo.save("upload.jpg")
+        with open("upload.jpg", 'rb') as f:
+            photo_data = f.read()
+        update_student_info(ID, cell_phone_number, email, password, photo_data)
+
+        # record = get_student_info(ID)
+        # photo_data = record[-1]
+        # with open("./read.jpg", 'wb') as f:
+        #     f.write(photo_data)
+
     return render_template('student_change.html', username=username, identity=identity)
 
 
@@ -126,7 +143,9 @@ def maintenance_request():
     if request.method == 'POST':
         # example
         cell_phone_number = request.form.get('cell_phone_number')
-        head = request.files.get('head')
+        area = request.form.get('area')
+        description = request.form.get('description')
+        photo = request.files.get('pic')
 
     username = session['username']
     identity = session['identity']
