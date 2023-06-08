@@ -1,36 +1,10 @@
 from flask import Flask, request, render_template, redirect, url_for, session
+from mylib import *
 
-import pymysql  # 引入pymssql模块
-
-server = "localhost"  # 服务器名
-user = "root"  # 用户名
-password = ""  # 密码
-database = "Lab1"  # 数据库名
-
-connection = pymysql.connect(host=server,
-                             user=user,
-                             password=password,
-                             database=database)  # 建立连接
-
-cursor = connection.cursor()  # 创建游标对象
-
-# 查询语句
-sql = "SELECT * FROM Book where ID = 'b1'"  # test表格为自建表格，及填充相关内容
-
-try:
-    cursor.execute(sql)  # 执行查询语句
-    results = cursor.fetchall()  # 获取所有记录列表
-    print(results)
-except:
-    print("查询失败")
-
-connection.close()  # 关闭数据库连接
 
 app = Flask(__name__)
 app.secret_key = 'hello'
 
-
-# TODO 设计一个学生类
 
 # TODO 设计一个管理员类
 
@@ -58,13 +32,19 @@ def login():
         ID = request.form.get('ID')
         password = request.form.get('password')
         identity = request.form.get('identity')
-        session['ID'] = ID
-        session['password'] = password
-        session['identity'] = identity
-        session['username'] = '陈奕晓'
 
-        # TODO 改成判断函数
-        if ID == 'PB20111684' and password == 'As13771545222' and identity == '学生':
+        if identity == '学生':
+            try:
+                record = get_student_info(ID)
+                user = Student(record)
+                session['ID'] = ID
+                session['identity'] = identity
+            except:
+                print("user name doesn't exist")
+
+
+         # TODO 改成判断函数
+        if ID == user.id and password == user.passward and identity == '学生':
             # TODO 登录状态改为已登录
             session['state'] = 1
             return redirect(url_for('student_home'))
