@@ -7,9 +7,9 @@ CREATE TABLE Room (
     id VARCHAR(20) NOT NULL,
     apartment_id VARCHAR(20) NOT NULL,
     max_occupancy INT DEFAULT NULL,
-    occupied INT DEFAULT NULL,
+    occupied INT DEFAULT 0,
     president VARCHAR(20) DEFAULT NULL,
-    maintenance_status VARCHAR(20) DEFAULT NULL,
+    maintenance_status VARCHAR(20) DEFAULT 'None',
     PRIMARY KEY (apartment_id, id),
     FOREIGN KEY (apartment_id) REFERENCES Apartment(id)
 );
