@@ -126,8 +126,52 @@ class Record(object):
         self.person_in_charge = maintenance_record[6]
         self.report_time = maintenance_record[7]
         self.finish_time = maintenance_record[8]
+
         self.photo_data = maintenance_record[9]
         self.reporter_name = maintenance_record[10]
+
+
+def get_single_record(record_id):
+    """
+    get the maintenance record with given id, return a Record class
+    """
+
+    sql = f"select * from Maintenance where id = '{record_id}';"
+    cursor.execute(sql)
+    record_without_name = cursor.fetchone()
+
+    sql = "select photo from MaintenancePhotos " \
+          f"where maintenance_id = '{record_id}';"
+    cursor.execute(sql)
+    photo_data = cursor.fetchone()[0]
+
+    sql = "select name from Student " \
+          "where Student.id = " \
+          f"(select reporter_id from Maintenance where Maintenance.id = '{record_id}'); "
+    cursor.execute(sql)
+    name = cursor.fetchone()[0]
+
+    record = []
+    for x in record_without_name:
+        record.append(x)
+    record.append(photo_data)
+    record.append(name)
+
+    result = Record(record)
+
+    return result
+
+
+def finish_record(record_id):
+    """
+    change the status of a record to Finished
+    """
+
+    args = (record_id, "Finished")
+    cursor.callproc('update_maintenance_status', args)
+    connection.commit()
+
+    return
 
 
 def get_stu_view_records(student_id):
@@ -154,7 +198,7 @@ def get_admin_view_records():
     """
 
     args = ()
-    cursor.callproc('get_apartment_maintenance_student', args)
+    cursor.callproc('get_apartment_maintenance_administrator', args)
     records = cursor.fetchall()
 
     result = []
@@ -164,4 +208,3 @@ def get_admin_view_records():
         result.append(tmp)
 
     return result
-
