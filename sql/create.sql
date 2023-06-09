@@ -7,9 +7,9 @@ CREATE TABLE Room (
     id VARCHAR(20) NOT NULL,
     apartment_id VARCHAR(20) NOT NULL,
     max_occupancy INT DEFAULT NULL,
-    occupied INT DEFAULT NULL,
+    occupied INT DEFAULT 0,
     president VARCHAR(20) DEFAULT NULL,
-    maintenance_status VARCHAR(20) DEFAULT NULL,
+    maintenance_status VARCHAR(20) DEFAULT '无',
     PRIMARY KEY (apartment_id, id),
     FOREIGN KEY (apartment_id) REFERENCES Apartment(id)
 );
@@ -109,6 +109,7 @@ CREATE TABLE ReturnApplication (
     room_id VARCHAR(20) DEFAULT NULL,
     apartment_id VARCHAR(20) DEFAULT NULL,
     return_time DATETIME DEFAULT NULL,
+    purpose VARCHAR(1000) DEFAULT NULL,
     approval_status VARCHAR(20) DEFAULT NULL,
     FOREIGN KEY (student_id) REFERENCES Student(id),
     FOREIGN KEY (apartment_id, room_id) REFERENCES Room(apartment_id, id)

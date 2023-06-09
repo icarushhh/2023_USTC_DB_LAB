@@ -31,8 +31,7 @@ DELIMITER ;
 DELIMITER //
 CREATE PROCEDURE get_student_info(IN student_id VARCHAR(20))
 BEGIN
-    SELECT id, name, gender, born, class, apartment_id, room_id, college, id_card, domicile, phone, email, major, password, 
-    state, photo FROM Student WHERE id = student_id;
+    SELECT id, name, gender, born, class, apartment_id, room_id, college, id_card, domicile, phone, email, major, state, photo FROM Student WHERE id = student_id;
 END //
 DELIMITER ;
 
@@ -138,7 +137,7 @@ BEGIN
     END;
 
     START TRANSACTION;
-    INSERT INTO Maintenance (room_id, apartment_id, reporter_id, fault_info, approval_status, application_time) VALUES (ro_id, apart_id, student_id, fault_in, 'Pending', NOW());
+    INSERT INTO Maintenance (room_id, apartment_id, reporter_id, fault_info, approval_status, application_time) VALUES (ro_id, apart_id, student_id, fault_in, '待维修', NOW());
     INSERT INTO MaintenancePhotos (maintenance_id, photo) VALUES (LAST_INSERT_ID(), fault_photo);
     COMMIT;
 END //
@@ -159,9 +158,9 @@ END //
 DELIMITER ;
 
 DELIMITER //
-CREATE PROCEDURE register_visitor(IN id_card VARCHAR(50), IN name VARCHAR(50), IN category VARCHAR(20), IN phone VARCHAR(15), IN purpose VARCHAR(1000), IN target_room VARCHAR(20), IN target_apartment VARCHAR(20), IN departure_time DATETIME)
+CREATE PROCEDURE register_visitor(IN visitor_id_card VARCHAR(50), IN visitor_name VARCHAR(50), IN visitor_category VARCHAR(20), IN visitor_phone VARCHAR(15), IN visitor_purpose VARCHAR(1000), IN visitor_target_room VARCHAR(20), IN visitor_target_apartment VARCHAR(20), IN visitor_departure_time DATETIME)
 BEGIN
-    INSERT INTO Visitor (id_card, name, category, phone, purpose, target_room, target_apartment, arrival_time, departure_time) VALUES (id_card, name, category, phone, purpose, target_room, target_apartment, NOW(), departure_time);
+    INSERT INTO Visitor (id_card, name, category, phone, purpose, target_room, target_apartment, arrival_time, departure_time) VALUES (visitor_id_card, visitor_name, visitor_category, visitor_phone, visitor_purpose, visitor_target_room, visitor_target_apartment, NOW(), visitor_departure_time);
 END //
 DELIMITER ;
 
@@ -175,23 +174,22 @@ END //
 DELIMITER ;
 
 DELIMITER //
-CREATE PROCEDURE apply_for_leave(IN student_id VARCHAR(20), IN leave_time DATETIME, IN expected_return_time DATETIME, IN purpose VARCHAR(1000), IN destination VARCHAR(1000))
+CREATE PROCEDURE apply_for_leave(IN leave_student_id VARCHAR(20), IN student_leave_time DATETIME, IN student_expected_return_time DATETIME, IN student_purpose VARCHAR(1000), IN student_destination VARCHAR(1000))
 BEGIN
-    DECLARE room_id VARCHAR(20);
-    DECLARE apartment_id VARCHAR(20);
-    SELECT room_id, apartment_id INTO room_id, apartment_id FROM Student WHERE id = student_id;
-    INSERT INTO LeaveApplication (student_id, room_id, apartment_id, leave_time, expected_return_time, approval_status, purpose, destination) VALUES (student_id, room_id, apartment_id, leave_time, expected_return_time, 'Pending', purpose, destination);
+    DECLARE ro_id VARCHAR(20);
+    DECLARE apart_id VARCHAR(20);
+    SELECT room_id, apartment_id INTO ro_id, apart_id FROM Student WHERE id = leave_student_id;
+    INSERT INTO LeaveApplication (student_id, room_id, apartment_id, leave_time, expected_return_time, approval_status, purpose, destination) VALUES (leave_student_id, ro_id, apart_id, student_leave_time, student_expected_return_time, '审核中', student_purpose, student_destination);
 END //
 DELIMITER ;
 
 DELIMITER //
-CREATE PROCEDURE apply_for_return(IN student_id VARCHAR(20), IN return_time DATETIME ,IN puruose VARCHAR(1000))
+CREATE PROCEDURE apply_for_return(IN return_student_id VARCHAR(20), IN student_return_time DATETIME, IN student_purpose VARCHAR(1000))
 BEGIN
-    DECLARE room_id VARCHAR(20);
-    DECLARE apartment_id VARCHAR(20);
-    SELECT room_id, apartment_id INTO room_id, apartment_id FROM Student WHERE id = student_id;
-    INSERT INTO ReturnApplication (student_id, room_id, apartment_id, return_time, approval_status, purpose) 
-    VALUES (student_id, room_id, apartment_id, return_time, 'Pending', purpose);
+    DECLARE ro_id VARCHAR(20);
+    DECLARE apart_id VARCHAR(20);
+    SELECT room_id, apartment_id INTO ro_id, apart_id FROM Student WHERE id = return_student_id;
+    INSERT INTO ReturnApplication (student_id, room_id, apartment_id, return_time, approval_status, purpose) VALUES (return_student_id, ro_id, apart_id, student_return_time, '审核中', student_purpose);
 END //
 DELIMITER ;
 
@@ -224,31 +222,31 @@ END //
 DELIMITER ;
 
 DELIMITER //
-CREATE PROCEDURE StudentLogin(IN input_id VARCHAR(20), IN input_password VARCHAR(50), OUT result VARCHAR(50))
+CREATE FUNCTION StudentLogin(input_id VARCHAR(20), input_password VARCHAR(50)) RETURNS VARCHAR(50) DETERMINISTIC
 BEGIN
     DECLARE temp_password VARCHAR(50);
     SELECT password INTO temp_password FROM Student WHERE id = input_id;
     IF temp_password IS NULL THEN
-        SET result = 'Student ID not found.';
+        RETURN 'Student ID not found.';
     ELSEIF temp_password != input_password THEN
-        SET result = 'Incorrect password.';
+        RETURN 'Incorrect password.';
     ELSE
-        SET result = 'Login successful.';
+        RETURN 'Login successful.';
     END IF;
 END; //
 DELIMITER ;
 
 DELIMITER //
-CREATE PROCEDURE ManagerLogin(IN input_id VARCHAR(20), IN input_password VARCHAR(50), OUT result VARCHAR(50))
+CREATE FUNCTION ManagerLogin(input_id VARCHAR(20), input_password VARCHAR(50)) RETURNS VARCHAR(50) DETERMINISTIC
 BEGIN
     DECLARE temp_password VARCHAR(50);
     SELECT password INTO temp_password FROM Manager WHERE id = input_id;
     IF temp_password IS NULL THEN
-        SET result = 'Manager ID not found.';
+        RETURN 'Manager ID not found.';
     ELSEIF temp_password != input_password THEN
-        SET result = 'Incorrect password.';
+        RETURN 'Incorrect password.';
     ELSE
-        SET result = 'Login successful.';
+        RETURN 'Login successful.';
     END IF;
 END; //
 DELIMITER ;
@@ -330,51 +328,27 @@ END //
 DELIMITER ;
 
 DELIMITER //
-CREATE PROCEDURE get_apartment_maintenance_student(IN stud_id VARCHAR(20))
+CREATE PROCEDURE get_apartment_maintenance(IN stud_id VARCHAR(20))
 BEGIN
     SELECT 
         Maintenance.id, 
         Maintenance.room_id, 
         Maintenance.apartment_id, 
         Maintenance.reporter_id, 
+        Student.name AS reporter_name, 
         Maintenance.fault_info, 
         Maintenance.approval_status, 
         Maintenance.person_in_charge, 
         Maintenance.application_time, 
         Maintenance.completion_time,
-        MaintenancePhotos.photo,
-        Student.name AS reporter_name
+        MaintenancePhotos.photo
     FROM 
         Maintenance
     JOIN 
-         Student ON Maintenance.reporter_id = Student.id
+        Student ON Maintenance.reporter_id = Student.id
     LEFT JOIN
         MaintenancePhotos ON Maintenance.id = MaintenancePhotos.maintenance_id
     WHERE 
         Maintenance.apartment_id = (SELECT apartment_id FROM Student WHERE id = stud_id) AND Maintenance.room_id = (SELECT room_id FROM Student WHERE id = stud_id);
-END //
-DELIMITER ;
-
-DELIMITER //
-CREATE PROCEDURE get_apartment_maintenance_administrator()
-BEGIN
-    SELECT 
-        Maintenance.id, 
-        Maintenance.room_id, 
-        Maintenance.apartment_id, 
-        Maintenance.reporter_id, 
-        Maintenance.fault_info, 
-        Maintenance.approval_status, 
-        Maintenance.person_in_charge, 
-        Maintenance.application_time, 
-        Maintenance.completion_time,
-        MaintenancePhotos.photo,
-        Student.name AS reporter_name
-    FROM 
-        Maintenance
-    JOIN 
-         Student ON Maintenance.reporter_id = Student.id
-    LEFT JOIN
-        MaintenancePhotos ON Maintenance.id = MaintenancePhotos.maintenance_id;
 END //
 DELIMITER ;
