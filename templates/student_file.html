@@ -12,58 +12,67 @@
 {% block body%}
 <div class="data_block">
     <ul class="list_group">
-        <li class="list_group left">我的档案</li>
+        <li class="list_group left">学生档案</li>
         <li class="list_group center">
-            <img src="/static/image/head.jpg" alt="暂无图片" width="150" height="200">
+            <img src="{{address}}" alt="暂无图片" width="150" height="200">
         </li>
         <li class="list_group right">
             <span class="pull_left">姓名</span>
-            <span>陈奕晓</span>
+            <span>{{ user.name }}</span>
         </li>
         <li class="list_group right">
             <span class="pull_left">性别</span>
-            <span>男</span>
+            <span>{{ user.gender }}</span>
         </li>
         <li class="list_group right">
             <span class="pull_left">身份证</span>
-            <span>1234567890</span>
+            <span>{{ user.id_card }}</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">生日</span>
+            <span>{{ user.birth }}</span>
         </li>
         <li class="list_group right">
             <span class="pull_left">学号</span>
-            <span>PB20111684</span>
+            <span>{{ user.id }}</span>
         </li>
         <li class="list_group right">
             <span class="pull_left">学院</span>
-            <span>计科</span>
+            <span>{{ user.college }}</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">专业</span>
+            <span>{{ user.major }}</span>
         </li>
         <li class="list_group right">
             <span class="pull_left">班级</span>
-            <span>大三三班</span>
+            <span>{{ user.classs }}</span>
         </li>
         <li class="list_group right">
             <span class="pull_left">公寓</span>
-            <span>1栋</span>
+            <span>{{ user.apartment_id }}</span>
         </li>
         <li class="list_group right">
             <span class="pull_left">宿舍</span>
-            <span>402</span>
+            <span>{{ user.room_id }}</span>
         </li>
         <li class="list_group right">
             <span class="pull_left">状态</span>
-            <span>在校</span>
+            <span>{{ user.state }}</span>
         </li>
         <li class="list_group right">
             <span class="pull_left">户籍</span>
-            <span>浙江台州</span>
+            <span>{{ user.domicile }}</span>
         </li>
         <li class="list_group right">
             <span class="pull_left">手机号</span>
-            <span>13771161706</span>
+            <span>{{ user.phone }}</span>
         </li>
         <li class="list_group right">
             <span class="pull_left">邮箱</span>
-            <span>asog@mail.ustc.edu.cn</span>
+            <span>{{ user.email }}</span>
         </li>
     </ul>
+
 </div>
 {% endblock %}

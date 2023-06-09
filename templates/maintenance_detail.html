@@ -39,12 +39,15 @@
         </li>
         <li class="list_group right">
             <span class="pull_left">当前状态</span>
-            <span>{{ record.status }}</span>
+            <span>{{status}}</span>
         </li>
     </ul>
 <!--    是管理员并且状态为等待维修-->
-    {% if identity=="管理员" and record.status=="Pending" %}
-    <button>通过</button>
+    {% if identity=='管理员' and status==0 %}
+    <form action="#" , method="post">
+        <button type="submit">通过</button>
+    </form>
     {% endif %}
+
 </div>
 {% endblock %}

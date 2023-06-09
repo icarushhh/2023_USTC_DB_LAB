@@ -19,11 +19,12 @@
               <!-- 筛选要做吗？ -->
               <span class="pull_left">{{ record.content }}</span>
               <!-- 链接地址 跳转至详情界面 -->
-              <a href="/records/{{record.address}}">查看详情</a>
+              <a href="/guest_detail/{{record.address}}">查看详情</a>
             </li>
 
         {% endfor %}
     </ul>
-    <button>登记访客</button>
+    <form action="/guest_register">
+    <button>登记访客</button></form>
 </div>
 {% endblock %}

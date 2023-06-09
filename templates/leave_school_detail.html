@@ -42,10 +42,11 @@
             <span>等待审批</span>
         </li>
     </ul>
-    <div class="bottom-list">
-    <!-- 按钮按了之后操作待做 -->
-    <button>通过</button>
-    <button>不通过</button>
-    </div>
+
+    <form action="/agree_leave_school/{{index}}" class="bottom-list" method="post">
+    <button>通过</button></form>
+    <form action="/disagree_leave_school/{{index}}" class="bottom-list" method="post">
+    <button>不通过</button></form>
+
 </div>
 {% endblock %}
