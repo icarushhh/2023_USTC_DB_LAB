@@ -4,7 +4,7 @@ from datetime import datetime
 # connect to database
 server = "localhost"  # 服务器名
 user = "root"  # 用户名
-password = "ZSZ1103753519123"  # 密码
+password = "As13771545222"  # 密码
 database = "student_apartment"  # 数据库名
 
 connection = pymysql.connect(host=server,

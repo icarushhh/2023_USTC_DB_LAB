@@ -14,36 +14,51 @@
     <ul class="list_group">
         <li class="list_group left">维修详情</li>
         <li class="list_group center">
-            <!-- 怎么通过python传？ 给朱哥考虑 -->
-            <img src="/static/image/maintenance.jpg" alt="暂无图片" width="600" height="450">
+            <img src="{{address}}" alt="暂无图片" width="600" height="450">
         </li>
         <li class="list_group right">
-            <span class="pull_left">申报时间</span>
-            <span>2023.5.31</span>
+            <span class="pull_left">维修编号</span>
+            <span>{{record.id}}</span>
         </li>
         <li class="list_group right">
-            <span class="pull_left">申报人</span>
-            <span>陈奕晓</span>
+            <span class="pull_left">维修宿舍</span>
+            <span>{{record.room_id}}</span>
         </li>
         <li class="list_group right">
-            <span class="pull_left">维修位置</span>
-            <span>脑子</span>
+            <span class="pull_left">维修公寓</span>
+            <span>{{record.apartment_id}}</span>
         </li>
         <li class="list_group right">
-            <span class="pull_left">联系方式</span>
-            <span>13771161706</span>
+            <span class="pull_left">申报人学号</span>
+            <span>{{record.reporter_id}}</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">申报人姓名</span>
+            <span>{{record.reporter_name}}</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">详细信息</span>
+            <span>{{record.fault_info}}</span>
         </li>
         <li class="list_group right">
             <span class="pull_left">处理人</span>
-            <span>阿姨</span>
+            <span>{{record.person_in_charge}}</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">报告时间</span>
+            <span>{{record.report_time}}</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">完成时间</span>
+            <span>{{record.finish_time}}</span>
         </li>
         <li class="list_group right">
             <span class="pull_left">当前状态</span>
-            <span>{{status}}</span>
+            <span>{{record.status}}</span>
         </li>
     </ul>
 <!--    是管理员并且状态为等待维修-->
-    {% if identity=='管理员' and status==0 %}
+    {% if identity=='管理员' and record.status=="Pending" %}
     <form action="#" , method="post">
         <button type="submit">通过</button>
     </form>

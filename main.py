@@ -1,8 +1,17 @@
 from flask import Flask, request, render_template, redirect, url_for, session
 from mylib import *
+from PIL import Image
+import io
+from werkzeug.datastructures import FileStorage
+import matplotlib.pyplot as plt
+import numpy as np
 
 app = Flask(__name__)
 app.secret_key = 'hello'
+
+
+# TODO 设计一个维修类
+
 
 # 初始化未登录
 @app.before_request
@@ -29,9 +38,9 @@ def login():
                 session['ID'] = ID
                 session['identity'] = identity
                 session['username'] = user.name
-            except Exception as e:
-                print(e)
-                print("Fail to login as a student")
+            except:
+                print("user name doesn't exist")
+                return render_template('login.html')
         elif identity == '管理员':
             try:
                 record = get_admin_info(ID)
@@ -39,9 +48,11 @@ def login():
                 session['ID'] = ID
                 session['identity'] = identity
                 session['username'] = user.name
-            except Exception as e:
-                print(e)
-                print("Fail to login as an administrator")
+            except:
+                print("user name doesn't exist")
+                return render_template('login.html')
+        else:
+            return render_template('login.html')
 
         if ID == user.id and password == user.password and identity == '学生':
             session['state'] = 1
@@ -59,9 +70,15 @@ def login():
 def student_home():
     if session['state'] is None:
         return redirect('/')
+    ID = session['ID']
     username = session['username']
     identity = session['identity']
-    return render_template('student_home.html', username=username, identity=identity)
+    record = get_student_info(ID)
+    user = Student(record)
+    state = user.state
+
+    return render_template('student_home.html', username=username,
+                           identity=identity, state=state)
 
 
 # 需要学生类作为参数，包含学生的一切属性
@@ -78,13 +95,11 @@ def student_file():
 
     with open("./static/image/student_head/" + ID + ".jpg", 'wb') as f:
         f.write(user.photo)
-    address = "./static/image/student_head/" + ID + ".jpg"
-
-    # TODO 网页能显示，但图片无法显示
+    address = "/static/image/student_head/" + ID + ".jpg"
     return render_template('student_file.html', username=username,
-                           identity=identity, user=user, pic_address=address)
+                           identity=identity, user=user, address=address)
 
-# 需要学生类？（给输入框初始值）
+
 @app.route('/student_change', methods=['POST', 'GET'])
 def student_change():
     if session['state'] is None:
@@ -93,24 +108,38 @@ def student_change():
     username = session['username']
     identity = session['identity']
 
+    record = get_student_info(ID)
+    user = Student(record)
+
     if request.method == 'POST':
         # example
         cell_phone_number = request.form.get('cell_phone_number')
         email = request.form.get('email')
         password = request.form.get('password')
         photo = request.files.get('head')
+        # print(photo)
+        if photo.filename != '':
+            photo.save("./static/image/student_head/" + ID + ".jpg")
+            with open("./static/image/student_head/" + ID + ".jpg", 'rb') as f:
+                photo_data = f.read()
+        # 下为屎山代码 印度大厨
+        else:
+            # print('photo is none')
+            with open("./static/image/student_head/" + ID + ".jpg", 'wb') as f:
+                f.write(user.photo)
+            with open("./static/image/student_head/" + ID + ".jpg", 'rb') as f:
+                photo_data = f.read()
 
-        photo.save("stu_change_upload.jpg")
-        with open("stu_change_upload.jpg", 'rb') as f:
-            photo_data = f.read()
         update_student_info(ID, cell_phone_number, email, password, photo_data)
 
         # record = get_student_info(ID)
         # photo_data = record[-1]
         # with open("./read.jpg", 'wb') as f:
         #     f.write(photo_data)
+        return redirect('/student_file')
 
-    return render_template('student_change.html', username=username, identity=identity)
+    return render_template('student_change.html', username=username
+                           , identity=identity, user=user)
 
 
 # 需要参数为username和identity，用以表示身份和姓名
@@ -121,16 +150,14 @@ def maintenance_request():
     ID = session['ID']
     username = session['username']
     identity = session['identity']
-    # TODO 表单提交的电话和维修区域在数据库中没有
+
     if request.method == 'POST':
         # example
-        cell_phone_number = request.form.get('cell_phone_number')
-        area = request.form.get('area')
         description = request.form.get('description')
         photo = request.files.get('pic')
 
-        photo.save("maintain_upload.jpg")
-        with open("maintain_upload.jpg", 'rb') as f:
+        photo.save("./tmp_maintenance.jpg")
+        with open("./tmp_maintenance.jpg", 'rb') as f:
             photo_data = f.read()
 
         report_maintenance(ID, description, photo_data)
@@ -185,19 +212,20 @@ def maintenance_detail(index):
     ID = session['ID']
 
     record = get_single_record(index)
-    # TODO record 中存储了读出的Record类，类定义见mylib.py
-    #  将record中的信息展示在detail界面中（已经展示维修状态作为测试）
 
-    # TODO detail界面中的 联系方式和维修位置 在Maintenance数据库中没有，
-    #  如果要单独select会破坏Record类的结构，那样会很丑陋
+    address = "./static/image/maintenance_pic/" + str(record.id) + ".jpg"
+    with open(address, 'wb') as f:
+        f.write(record.photo_data)
+    address = "/static/image/maintenance_pic/" + str(record.id) + ".jpg"
 
     if request.method == 'POST':
-        # TODO update失败，button没效果？
         print(1)
         finish_record(index)
         return redirect('/maintenance_show')
 
-    return render_template('maintenance_detail.html', username=username, identity=identity, record=record)
+    return render_template('maintenance_detail.html'
+                           , username=username, identity=identity
+                           , record=record, address=address)
 
 
 @app.route('/return_school_apply', methods=['POST', 'GET'])
@@ -210,6 +238,7 @@ def return_school_apply():
     # TODO 数据库的apply_for_return函数有问题
     if request.method == 'POST':
         description = request.form.get('description')
+        return_time = request.form.get('return_time')
         apply_for_return(ID, description)
 
         return redirect('/student_home')
@@ -225,13 +254,13 @@ def leave_school_apply():
     identity = session['identity']
     ID = session['ID']
 
-    # TODO 网页上的表单和数据库table表项不一致
-    #  数据库：预期离开时间，目的地，描述； 网页：联系人，电话，描述
     # TODO 通过 request.form.get 函数获取数据 然后存到数据库中
     if request.method == 'POST':
         # example
+        departure_time = request.form.get('departure_time')
+        destination = request.form.get('destination')
         description = request.form.get('description')
-        print(description)
+        # print(description)
         return redirect('/student_home')
 
     return render_template('leave_school_apply.html', username=username, identity=identity)
