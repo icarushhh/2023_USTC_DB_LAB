@@ -43,7 +43,6 @@ def login():
                 print(e)
                 print("Fail to login as an administrator")
 
-
         if ID == user.id and password == user.password and identity == '学生':
             session['state'] = 1
             return redirect(url_for('student_home'))
@@ -77,12 +76,13 @@ def student_file():
     record = get_student_info(ID)
     user = Student(record)
 
-    with open("./static/image/student_head/"+ID+".jpg", 'wb') as f:
+    with open("./static/image/student_head/" + ID + ".jpg", 'wb') as f:
         f.write(user.photo)
-    address = "./static/image/student_head/"+ID+".jpg"
+    address = "./static/image/student_head/" + ID + ".jpg"
+
+    # TODO 网页能显示，但图片无法显示
     return render_template('student_file.html', username=username,
                            identity=identity, user=user, pic_address=address)
-
 
 # 需要学生类？（给输入框初始值）
 @app.route('/student_change', methods=['POST', 'GET'])
@@ -105,10 +105,10 @@ def student_change():
             photo_data = f.read()
         update_student_info(ID, cell_phone_number, email, password, photo_data)
 
-        record = get_student_info(ID)
-        photo_data = record[-1]
-        with open("./read.jpg", 'wb') as f:
-            f.write(photo_data)
+        # record = get_student_info(ID)
+        # photo_data = record[-1]
+        # with open("./read.jpg", 'wb') as f:
+        #     f.write(photo_data)
 
     return render_template('student_change.html', username=username, identity=identity)
 
@@ -566,4 +566,3 @@ def administrator_file():
 # 按间距中的绿色按钮以运行脚本。
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
-
