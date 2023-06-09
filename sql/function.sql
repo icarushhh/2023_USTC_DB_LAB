@@ -31,8 +31,7 @@ DELIMITER ;
 DELIMITER //
 CREATE PROCEDURE get_student_info(IN student_id VARCHAR(20))
 BEGIN
-    SELECT id, name, gender, born, class, apartment_id, room_id, college, id_card, domicile, phone, email, major, password, state, 
-     photo FROM Student WHERE id = student_id;
+    SELECT id, name, gender, born, class, apartment_id, room_id, college, id_card, domicile, phone, email, major, password, state, photo FROM Student WHERE id = student_id;
 END //
 DELIMITER ;
 
@@ -284,7 +283,7 @@ END //
 DELIMITER ;
 
 DELIMITER //
-CREATE PROCEDURE get_leave_applications(IN student_id_in VARCHAR(20))
+CREATE PROCEDURE get_leave_applications()
 BEGIN
     SELECT 
         LeaveApplication.id, 
@@ -301,14 +300,12 @@ BEGIN
     FROM 
         LeaveApplication
     JOIN 
-        Student ON LeaveApplication.student_id = Student.id
-    WHERE 
-        LeaveApplication.student_id = student_id_in;
+        Student ON LeaveApplication.student_id = Student.id;
 END //
 DELIMITER ;
 
 DELIMITER //
-CREATE PROCEDURE get_return_applications(IN student_id_in VARCHAR(20))
+CREATE PROCEDURE get_return_applications()
 BEGIN
     SELECT 
         ReturnApplication.id, 
@@ -318,13 +315,12 @@ BEGIN
         ReturnApplication.room_id, 
         ReturnApplication.apartment_id, 
         ReturnApplication.return_time, 
+        ReturnApplication.purpose,
         ReturnApplication.approval_status
     FROM 
         ReturnApplication
     JOIN 
-        Student ON ReturnApplication.student_id = Student.id
-    WHERE 
-        ReturnApplication.student_id = student_id_in;
+        Student ON ReturnApplication.student_id = Student.id;
 END //
 DELIMITER ;
 
@@ -336,13 +332,13 @@ BEGIN
         Maintenance.room_id, 
         Maintenance.apartment_id, 
         Maintenance.reporter_id, 
+        Student.name AS reporter_name, 
         Maintenance.fault_info, 
         Maintenance.approval_status, 
         Maintenance.person_in_charge, 
         Maintenance.application_time, 
         Maintenance.completion_time,
-        MaintenancePhotos.photo,
-        Student.name AS reporter_name
+        MaintenancePhotos.photo
     FROM 
         Maintenance
     JOIN 

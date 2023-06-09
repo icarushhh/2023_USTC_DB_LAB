@@ -1,22 +1,3 @@
-/*
-SET GLOBAL event_scheduler = ON;
-
-DELIMITER //
-CREATE EVENT update_student_state_event
-ON SCHEDULE EVERY 1 DAY
-STARTS CURRENT_TIMESTAMP
-DO
-BEGIN
-    UPDATE Student
-    SET state = 0
-    WHERE id IN (
-        SELECT student_id
-        FROM LeaveApplication
-        WHERE approval_status = '已完成' AND leave_time <= CURDATE()
-    );
-END; //
-DELIMITER ;
-*/
 DELIMITER //
 CREATE TRIGGER update_completion_time
 BEFORE UPDATE ON Maintenance
@@ -109,4 +90,58 @@ BEGIN
         president = CASE WHEN president = OLD.id THEN NULL ELSE president END
     WHERE apartment_id = OLD.apartment_id AND id = OLD.room_id;
 END; //
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER update_student_state_after_return_approval
+AFTER UPDATE ON ReturnApplication
+FOR EACH ROW
+BEGIN
+    IF NEW.approval_status = '已通过' AND NEW.student_id IN (SELECT id FROM Student WHERE state = 0) THEN
+        UPDATE Student SET state = 1 WHERE id = NEW.student_id;
+    END IF;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER update_student_state_after_leave_approval
+AFTER UPDATE ON LeaveApplication
+FOR EACH ROW
+BEGIN
+    IF NEW.approval_status = '已通过' AND NEW.student_id IN (SELECT id FROM Student WHERE state = 1) THEN
+        UPDATE Student SET state = 0 WHERE id = NEW.student_id;
+    END IF;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER delete_existing_leave_application
+BEFORE INSERT ON LeaveApplication
+FOR EACH ROW
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM LeaveApplication
+        WHERE student_id = NEW.student_id AND approval_status = '审核中'
+    ) THEN
+        DELETE FROM LeaveApplication
+        WHERE student_id = NEW.student_id AND approval_status = '审核中';
+    END IF;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER delete_existing_return_application
+BEFORE INSERT ON ReturnApplication
+FOR EACH ROW
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM ReturnApplication
+        WHERE student_id = NEW.student_id AND approval_status = '审核中'
+    ) THEN
+        DELETE FROM ReturnApplication
+        WHERE student_id = NEW.student_id AND approval_status = '审核中';
+    END IF;
+END //
 DELIMITER ;
