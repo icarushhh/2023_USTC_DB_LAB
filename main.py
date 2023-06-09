@@ -202,27 +202,31 @@ def maintenance_detail(index):
 
 @app.route('/return_school_apply', methods=['POST', 'GET'])
 def return_school_apply():
-    # TODO state表示是否已经登录
     if session['state'] is None:
         return redirect('/')
-    # TODO 通过 request.form.get 函数获取数据 然后存到数据库中
-    if request.method == 'POST':
-        # example
-        description = request.form.get('description')
-        print(description)
-        return redirect('/student_home')
-
     username = session['username']
     identity = session['identity']
+    ID = session['ID']
+    # TODO 数据库的apply_for_return函数有问题
+    if request.method == 'POST':
+        description = request.form.get('description')
+        apply_for_return(ID, description)
+
+        return redirect('/student_home')
+
     return render_template('return_school_apply.html', username=username, identity=identity)
 
 
 @app.route('/leave_school_apply', methods=['POST', 'GET'])
 def leave_school_apply():
-    # TODO state表示是否已经登录
     if session['state'] is None:
         return redirect('/')
+    username = session['username']
+    identity = session['identity']
+    ID = session['ID']
 
+    # TODO 网页上的表单和数据库table表项不一致
+    #  数据库：预期离开时间，目的地，描述； 网页：联系人，电话，描述
     # TODO 通过 request.form.get 函数获取数据 然后存到数据库中
     if request.method == 'POST':
         # example
@@ -230,8 +234,6 @@ def leave_school_apply():
         print(description)
         return redirect('/student_home')
 
-    username = session['username']
-    identity = session['identity']
     return render_template('leave_school_apply.html', username=username, identity=identity)
 
 

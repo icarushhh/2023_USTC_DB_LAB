@@ -185,12 +185,13 @@ END //
 DELIMITER ;
 
 DELIMITER //
-CREATE PROCEDURE apply_for_return(IN student_id VARCHAR(20), IN return_time DATETIME)
+CREATE PROCEDURE apply_for_return(IN student_id VARCHAR(20), IN return_time DATETIME ,IN puruose VARCHAR(1000))
 BEGIN
     DECLARE room_id VARCHAR(20);
     DECLARE apartment_id VARCHAR(20);
     SELECT room_id, apartment_id INTO room_id, apartment_id FROM Student WHERE id = student_id;
-    INSERT INTO ReturnApplication (student_id, room_id, apartment_id, return_time, approval_status) VALUES (student_id, room_id, apartment_id, return_time, 'Pending');
+    INSERT INTO ReturnApplication (student_id, room_id, apartment_id, return_time, approval_status, purpose) 
+    VALUES (student_id, room_id, apartment_id, return_time, 'Pending', purpose);
 END //
 DELIMITER ;
 

@@ -1,4 +1,5 @@
 import pymysql
+from datetime import datetime
 
 # connect to database
 server = "localhost"  # 服务器名
@@ -74,6 +75,20 @@ def report_maintenance(student_id, description, photo):
 
     args = (student_id, reporter.room_id, reporter.apartment_id, description, photo)
     cursor.callproc('report_maintenance', args)
+    connection.commit()
+
+    return
+
+
+def apply_for_return(student_id, description):
+    # 获取当前日期和时间的对象
+    current_date_and_time = datetime.now()
+    # 格式化日期和时间的输出
+    formatted_date_and_time = current_date_and_time.strftime("%Y-%m-%d %H:%M:%S")
+    print(formatted_date_and_time)  # 输出"2021-11-28 00:00:00"
+
+    args = (student_id, formatted_date_and_time, description)
+    cursor.callproc('apply_for_return', args)
     connection.commit()
 
     return
