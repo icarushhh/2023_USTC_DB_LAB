@@ -4,7 +4,7 @@ from datetime import datetime
 # connect to database
 server = "localhost"  # 服务器名
 user = "root"  # 用户名
-password = "ZSZ1103753519123"  # 密码
+password = "As13771545222"  # 密码
 database = "student_apartment"  # 数据库名
 
 connection = pymysql.connect(host=server,
@@ -81,7 +81,6 @@ def report_maintenance(student_id, description, photo):
 
 
 def apply_for_return(student_id, return_time, description):
-
     args = (student_id, return_time, description)
     cursor.callproc('apply_for_return', args)
     connection.commit()
@@ -90,7 +89,6 @@ def apply_for_return(student_id, return_time, description):
 
 
 def apply_for_leave(student_id, leave_time, expected_return_time, purpose, destination):
-
     args = (student_id, leave_time, expected_return_time, purpose, destination)
     cursor.callproc('apply_for_leave', args)
     connection.commit()
@@ -227,3 +225,54 @@ def get_admin_view_records():
         result.append(tmp)
 
     return result
+
+
+# 离校申请类
+class leave_school(object):
+    """
+    Store the info of a return_school record
+    """
+
+    def __init__(self, leave_school_record):
+        self.id = leave_school_record[0]
+        self.student_id = leave_school_record[1]
+        self.room_id = leave_school_record[2]
+        self.apartment_id = leave_school_record[3]
+        self.leave_time = leave_school_record[4]
+        self.expected_return_time = leave_school_record[5]
+        self.purpose = leave_school_record[6]
+        self.destination = leave_school_record[7]
+        self.approval_status = leave_school_record[8]
+
+
+# 返校申请类
+class return_school(object):
+    """
+    Store the info of a return_school record
+    """
+
+    def __init__(self, return_school_record):
+        self.id = return_school_record[0]
+        self.student_id = return_school_record[1]
+        self.room_id = return_school_record[2]
+        self.apartment_id = return_school_record[3]
+        self.return_time = return_school_record[4]
+        self.purpose = return_school_record[5]
+        self.approval_status = return_school_record[6]
+
+
+class visitor(object):
+    """
+    Store the info of a return_school record
+    """
+
+    def __init__(self, visitor_record):
+        self.id = visitor_record[0]
+        self.name = visitor_record[1]
+        self.identity = visitor_record[2]
+        self.phone = visitor_record[3]
+        self.purpose = visitor_record[4]
+        self.target_room = visitor_record[5]
+        self.target_apartment = visitor_record[6]
+        self.arrive_time = visitor_record[7]
+        self.departure_time = visitor_record[8]

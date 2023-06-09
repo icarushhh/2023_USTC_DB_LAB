@@ -12,32 +12,42 @@
 {% block body%}
 <div class="data_block">
     <ul class="list_group">
-        <li class="list_group left">返校申报</li>
+        <li class="center">离校申报</li>
         <li class="list_group right">
-            <span class="pull_left">申报时间</span>
-            <span>2023.5.31</span>
+            <span class="pull_left">申请编号</span>
+            <span>{{record.id}}</span>
         </li>
         <li class="list_group right">
-            <span class="pull_left">申报人</span>
-            <span>陈奕晓</span>
+            <span class="pull_left">申报人学号</span>
+            <span>{{record.student_id}}</span>
         </li>
         <li class="list_group right">
-            <span class="pull_left">手机</span>
-            <span>13771161706</span>
+            <span class="pull_left">宿舍号</span>
+            <span>{{record.room_id}}</span>
         </li>
         <li class="list_group right">
-            <span class="pull_left">返校理由</span>
-            <span>我想学习！</span>
+            <span class="pull_left">公寓号</span>
+            <span>{{record.apartment_id}}</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">返校时间</span>
+            <span>{{record.return_time}}</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">返校原因</span>
+            <span>{{record.purpose}}</span>
         </li>
         <li class="list_group right">
             <span class="pull_left">当前状态</span>
-            <span>等待审批</span>
+            <span>{{record.approval_status}}</span>
         </li>
     </ul>
 
-    <form action="/agree_return_school/{{index}}" class="bottom-list" method="post">
+    {% if record.approval_status=='审核中' %}
+    <form action="/agree_return_school/{{record.id}}" class="bottom-list" method="post">
     <button>通过</button></form>
-    <form action="/disagree_return_school/{{index}}" class="bottom-list" method="post">
+    <form action="/disagree_return_school/{{record.id}}" class="bottom-list" method="post">
     <button>不通过</button></form>
+    {% endif %}
 </div>
 {% endblock %}

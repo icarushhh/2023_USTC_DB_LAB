@@ -220,6 +220,7 @@ def maintenance_detail(index):
                            , record=record, address=address)
 
 
+# TODO 返校申请和离校申请的类都搞定了
 @app.route('/return_school_apply', methods=['POST', 'GET'])
 def return_school_apply():
     if session['state'] is None:
@@ -228,7 +229,7 @@ def return_school_apply():
     identity = session['identity']
     ID = session['ID']
 
-    # TODO time数据格式不对，表单上传的是str，数据库需要datatime
+    # TODO time数据固定，表单上传的是str，数据库需要datatime
     #  需要输入为一定格式才能进行转换
     if request.method == 'POST':
         description = request.form.get('description')
@@ -248,7 +249,7 @@ def leave_school_apply():
     identity = session['identity']
     ID = session['ID']
 
-    # TODO time数据格式不对，表单上传的是str，数据库需要datatime
+    # TODO time数据格式固定，表单上传的是str，数据库需要datatime
     #  需要输入为一定格式才能进行转换
     if request.method == 'POST':
         # example
@@ -287,7 +288,7 @@ def IO_school_manage():
 # 用于处理入宿申请
 @app.route('/In_school', methods=['POST'])
 def In_school():
-    # TODO 通过 request.form.get 函数获取数据 然后存到数据库中
+    # TODO 通过 request.form.get 函数获取数据 然后存到数据库中 已新增户籍一栏
     name = request.form.get('name')
     print('In' + name)
     return redirect('/IO_school_manage')
@@ -303,21 +304,24 @@ def Out_school():
 
 
 # TODO 需要两个list 一个是返校申请的list 一个是离校申请的list
+#  传入的数据需要有两个属性：1.想要显示的数据‘申请人学号 状态 ’ 2.在table中的编号
 @app.route('/LR_school_manage', methods=['POST', 'GET'])
 def LR_school_manage():
     # TODO state表示是否已经登录
     if session['state'] is None:
         return redirect('/')
     # 演示用
-    records = []
-    for i in range(0, 50):
-        record = Record_for_show(i, i)
-        records.append(record)
+    # records = []
+    # for i in range(0, 50):
+    #     record = Record_for_show(i, i)
+    #     records.append(record)
+    leave_school_record = [str(i) for i in range(0, 9)]
+    record = leave_school(leave_school_record)
+    records1 = [record]
 
     username = session['username']
     identity = session['identity']
-    return render_template('LR_school_manage.html', username=username, identity=identity,
-                           records1=records[:50], records2=records[50:])
+    return render_template('LR_school_manage.html', username=username, identity=identity, records1=records1)
 
 
 # 查看第index个暂离申请，因此需要第index个暂离申请类
@@ -332,12 +336,15 @@ def leave_school_detail(index):
     if session['state'] is None:
         return redirect('/')
     # TODO 通过index获取指定维修记录，并传入render_template
+    # 例子
+    leave_school_record = [str(i) for i in range(0, 9)]
+    record = leave_school(leave_school_record)
 
     username = session['username']
     identity = session['identity']
 
     return render_template('leave_school_detail.html', username=username, identity=identity,
-                           index=index)
+                           record=record)
 
 
 # 用于通过离校申请
@@ -360,9 +367,13 @@ def disagree_leave_school(index):
 # 还要处理上传的修改状态
 @app.route('/return_school_detail/<int:index>', methods=['GET', 'POST'])
 def return_school_detail(index):
-    # TODO 若维修list不存在，index小于0或大于维修list的长度，则返回LR_school_manage界面
+    # TODO 若list不存在，index小于0或大于list的长度，则返回LR_school_manage界面
     if index < 0:
         return redirect('/LR_school_manage')
+
+    # for example
+    return_school_record = [str(i) for i in range(0, 7)]
+    record = return_school(return_school_record)
 
     # TODO state表示是否已经登录
     if session['state'] is None:
@@ -373,7 +384,7 @@ def return_school_detail(index):
     identity = session['identity']
 
     return render_template('return_school_detail.html', username=username
-                           , identity=identity, index=index)
+                           , identity=identity, record=record)
 
 
 # 用于通过返校申请
@@ -413,7 +424,7 @@ def administrator_change():
 
 
 # 管理员修改学生数据 应该传入修改的哪个学生
-# 改成学号会更好一点吗？
+# 改成学号
 @app.route('/admin_change_student/<int:index>', methods=['POST', 'GET'])
 def admin_change_student(index):
     # TODO state表示是否已经登录
@@ -432,6 +443,7 @@ def admin_change_student(index):
 
 
 # TODO 需要一个学生类的list
+#  传入的数据需要有两个属性：1.想要显示的数据‘学号 姓名 性别’ 2.在table中的编号
 @app.route('/student_show', methods=['POST', 'GET'])
 def student_show():
     # TODO state表示是否已经登录
@@ -450,6 +462,7 @@ def student_show():
 
 
 # TODO 需要一个访客list
+#  传入的数据需要有两个属性：1.想要显示的数据‘姓名 身份 目的’ 2.在table中的编号
 @app.route('/guest_show')
 def guest_show():
     # TODO state表示是否已经登录
