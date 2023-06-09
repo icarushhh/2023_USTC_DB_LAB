@@ -1,17 +1,9 @@
 from flask import Flask, request, render_template, redirect, url_for, session
 from mylib import *
-from PIL import Image
-import io
-from werkzeug.datastructures import FileStorage
-import matplotlib.pyplot as plt
-import numpy as np
+
 
 app = Flask(__name__)
 app.secret_key = 'hello'
-
-
-# TODO 设计一个维修类
-
 
 # 初始化未登录
 @app.before_request
@@ -235,11 +227,13 @@ def return_school_apply():
     username = session['username']
     identity = session['identity']
     ID = session['ID']
-    # TODO 数据库的apply_for_return函数有问题
+
+    # TODO time数据格式不对，表单上传的是str，数据库需要datatime
+    #  需要输入为一定格式才能进行转换
     if request.method == 'POST':
         description = request.form.get('description')
         return_time = request.form.get('return_time')
-        apply_for_return(ID, description)
+        apply_for_return(ID, return_time, description)
 
         return redirect('/student_home')
 
@@ -254,13 +248,17 @@ def leave_school_apply():
     identity = session['identity']
     ID = session['ID']
 
-    # TODO 通过 request.form.get 函数获取数据 然后存到数据库中
+    # TODO time数据格式不对，表单上传的是str，数据库需要datatime
+    #  需要输入为一定格式才能进行转换
     if request.method == 'POST':
         # example
         departure_time = request.form.get('departure_time')
+        return_time = request.form.get('return_time')
         destination = request.form.get('destination')
         description = request.form.get('description')
-        # print(description)
+
+        apply_for_leave(ID, departure_time, return_time, description, destination)
+
         return redirect('/student_home')
 
     return render_template('leave_school_apply.html', username=username, identity=identity)

@@ -58,7 +58,7 @@
         </li>
     </ul>
 <!--    是管理员并且状态为等待维修-->
-    {% if identity=='管理员' and record.status=="Pending" %}
+    {% if identity=='管理员' and record.status=="待维修" %}
     <form action="#" , method="post">
         <button type="submit">通过</button>
     </form>

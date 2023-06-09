@@ -4,7 +4,7 @@ from datetime import datetime
 # connect to database
 server = "localhost"  # 服务器名
 user = "root"  # 用户名
-password = "ZSZ1103753519123"  # 密码
+password = "As13771545222"  # 密码
 database = "student_apartment"  # 数据库名
 
 connection = pymysql.connect(host=server,
@@ -80,19 +80,15 @@ def report_maintenance(student_id, description, photo):
     return
 
 
-def apply_for_return(student_id, return_time, description):
+def apply_for_return(student_id, description):
+    # 获取当前日期和时间的对象
+    current_date_and_time = datetime.now()
+    # 格式化日期和时间的输出
+    formatted_date_and_time = current_date_and_time.strftime("%Y-%m-%d %H:%M:%S")
+    print(formatted_date_and_time)  # 输出"2021-11-28 00:00:00"
 
-    args = (student_id, return_time, description)
+    args = (student_id, formatted_date_and_time, description)
     cursor.callproc('apply_for_return', args)
-    connection.commit()
-
-    return
-
-
-def apply_for_leave(student_id, leave_time, expected_return_time, purpose, destination):
-
-    args = (student_id, leave_time, expected_return_time, purpose, destination)
-    cursor.callproc('apply_for_leave', args)
     connection.commit()
 
     return
@@ -186,7 +182,7 @@ def finish_record(record_id):
     change the status of a record to Finished
     """
 
-    args = (record_id, "已完成")
+    args = (record_id, "Finished")
     cursor.callproc('update_maintenance_status', args)
     connection.commit()
 
