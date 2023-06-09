@@ -39,11 +39,11 @@
         </li>
         <li class="list_group right">
             <span class="pull_left">当前状态</span>
-            <span>等待维修</span>
+            <span>{{ record.status }}</span>
         </li>
     </ul>
 <!--    是管理员并且状态为等待维修-->
-    {% if identity==0 and state==0 %}
+    {% if identity=="管理员" and record.status=="Pending" %}
     <button>通过</button>
     {% endif %}
 </div>

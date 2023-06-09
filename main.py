@@ -1,16 +1,8 @@
 from flask import Flask, request, render_template, redirect, url_for, session
 from mylib import *
-from PIL import Image
-import io
-from werkzeug.datastructures import FileStorage
-import matplotlib.pyplot as plt
-import numpy as np
 
 app = Flask(__name__)
 app.secret_key = 'hello'
-
-# TODO 设计一个维修类
-
 
 # 初始化未登录
 @app.before_request
@@ -37,8 +29,9 @@ def login():
                 session['ID'] = ID
                 session['identity'] = identity
                 session['username'] = user.name
-            except:
-                print("user name doesn't exist")
+            except Exception as e:
+                print(e)
+                print("Fail to login as a student")
         elif identity == '管理员':
             try:
                 record = get_admin_info(ID)
@@ -46,8 +39,9 @@ def login():
                 session['ID'] = ID
                 session['identity'] = identity
                 session['username'] = user.name
-            except:
-                print("user name doesn't exist")
+            except Exception as e:
+                print(e)
+                print("Fail to login as an administrator")
 
         if ID == user.id and password == user.password and identity == '学生':
             session['state'] = 1
@@ -156,14 +150,11 @@ class Record_for_show:
 # 传入的数据需要有两个属性：1.想要显示的数据‘日期 申请人 状态’ 2.在table中的编号
 @app.route('/maintenance_show')
 def maintenance_show():
-    # TODO state表示是否已经登录
     if session['state'] is None:
         return redirect('/')
     username = session['username']
     identity = session['identity']
     ID = session['ID']
-    # TODO 写一个函数，要求：如果是学生查看，只显示自己宿舍的。如果是管理员查看，则显示全部
-    #  返回符合要求的维修记录list,并存到全局变量session中去
 
     records_for_show = []        # 这个列表里存放 Record_for_show 类
     if identity == "学生":
@@ -181,36 +172,33 @@ def maintenance_show():
     return render_template('maintenance_show.html', username=username, identity=identity, records=records_for_show)
 
 
-# TODO 改成维修类的变量
-status = 0
-
-
 # 查看第index个维修记录，因此需要第index个维修类
 # 如果是管理员，则还要处理上传的修改状态
 @app.route('/maintenance_detail/<int:index>', methods=['GET', 'POST'])
 def maintenance_detail(index):
-    # TODO 若维修list不存在，index小于0或大于维修list的长度，则返回maintenance_show界面
     if index < 0:
         return redirect('/maintenance_show')
-
-    # TODO state表示是否已经登录
     if session['state'] is None:
         return redirect('/')
-    # TODO 通过index获取指定维修记录，并传入render_template
-    #  status表维修状态，在此用于演示
-
-    global status
-    # 表示已经维修完成
-    if request.method == 'POST':
-        # TODO 修改维修状态为已经完成 并传回数据库
-        status = 1
-        print(status)
-        return redirect('/maintenance_show')
 
     username = session['username']
     identity = session['identity']
+    ID = session['ID']
 
-    return render_template('maintenance_detail.html', username=username, identity=identity, status=status)
+    record = get_single_record(index)
+    # TODO record 中存储了读出的Record类，类定义见mylib.py
+    #  将record中的信息展示在detail界面中（已经展示维修状态作为测试）
+
+    # TODO detail界面中的 联系方式和维修位置 在Maintenance数据库中没有，
+    #  如果要单独select会破坏Record类的结构，那样会很丑陋
+
+    if request.method == 'POST':
+        # TODO update失败，button没效果？
+        print(1)
+        finish_record(index)
+        return redirect('/maintenance_show')
+
+    return render_template('maintenance_detail.html', username=username, identity=identity, record=record)
 
 
 @app.route('/return_school_apply', methods=['POST', 'GET'])
@@ -250,7 +238,6 @@ def leave_school_apply():
 
 @app.route('/administrator_home')
 def administrator_home():
-    # TODO state表示是否已经登录
     if session['state'] is None:
         return redirect('/')
     username = session['username']
