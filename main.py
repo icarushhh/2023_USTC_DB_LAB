@@ -5,7 +5,6 @@ import io
 from werkzeug.datastructures import FileStorage
 import matplotlib.pyplot as plt
 import numpy as np
-
 app = Flask(__name__)
 app.secret_key = 'hello'
 
@@ -48,6 +47,8 @@ def login():
                 session['username'] = user.name
             except:
                 print("user name doesn't exist")
+        else:
+            return render_template('login.html')
 
         if ID == user.id and password == user.password and identity == '学生':
             session['state'] = 1
@@ -79,16 +80,14 @@ def student_file():
     identity = session['identity']
     ID = session['ID']
 
-    if identity == '学生':
-        record = get_student_info(ID)
-        user = Student(record)
-    elif identity == '管理员':
-        record = get_admin_info(ID)
-        user = Admin(record)
-    # TODO read from the database and show info on the page
-    #  其中user 是一个学生类或一个管理员类，这两个类属性见mylib.py
+    record = get_student_info(ID)
+    user = Student(record)
 
-    return render_template('student_file.html', username=username, identity=identity)
+    with open("./static/image/student_head/"+ID+".jpg", 'wb') as f:
+        f.write(user.photo)
+    address = "./static/image/student_head/"+ID+".jpg"
+    return render_template('student_file.html', username=username,
+                           identity=identity, user=user, pic_address=address)
 
 
 # 需要学生类？（给输入框初始值）
@@ -112,10 +111,10 @@ def student_change():
             photo_data = f.read()
         update_student_info(ID, cell_phone_number, email, password, photo_data)
 
-        # record = get_student_info(ID)
-        # photo_data = record[-1]
-        # with open("./read.jpg", 'wb') as f:
-        #     f.write(photo_data)
+        record = get_student_info(ID)
+        photo_data = record[-1]
+        with open("./read.jpg", 'wb') as f:
+            f.write(photo_data)
 
     return render_template('student_change.html', username=username, identity=identity)
 
@@ -578,3 +577,4 @@ def administrator_file():
 # 按间距中的绿色按钮以运行脚本。
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
+
