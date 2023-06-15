@@ -15,7 +15,7 @@
         <li class="list_group left">访客信息</li>
         <li class="list_group right">
             <span class="pull_left">身份证</span>
-            <span>{{record.id}}</span>
+            <span>{{record.id_card}}</span>
         </li>
         <li class="list_group right">
             <span class="pull_left">姓名</span>
@@ -51,7 +51,7 @@
         </li>
     </ul>
     <!-- 怎么传入我要修改的哪个学生呢？ -->
-    <form action="/guest_change/{{index}}" class="bottom-list">
+    <form action="/guest_change/{{id_card}}" class="bottom-list">
     <button>修改</button></form>
 </div>
 {% endblock %}

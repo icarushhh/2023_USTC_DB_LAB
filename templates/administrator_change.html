@@ -13,18 +13,18 @@
   <div class="card-header">
     <div class="log">修改档案</div>
   </div>
-  <form method="post" action="#">
+  <form action="/administrator_change" method="post" enctype="multipart/form-data">
     <div class="form-group">
       <label for="cell_phone_number">手机号:</label>
-      <input value="" required="" name="cell_phone_number" id="cell_phone_number" type="text">
+      <input value="{{user.phone}}" required="" name="cell_phone_number" id="cell_phone_number" type="text">
     </div>
     <div class="form-group">
       <label for="password">密码:</label>
-      <input value="" required="" name="password" id="password" type="text">
+      <input value="{{user.password}}" required="" name="password" id="password" type="password">
     </div>
     <div class="form-group">
       <label for="head">头像:</label>
-      <input value="" required="" name="head" id="head" type="file">
+      <input value=""  name="head" id="head" type="file">
     </div>
     <div class="form-group">
       <input value="提交" type="submit">

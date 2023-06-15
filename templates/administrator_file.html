@@ -14,35 +14,35 @@
     <ul class="list_group">
         <li class="list_group left">管理员档案</li>
         <li class="list_group center">
-            <img src="/static/image/head.jpg" alt="暂无图片" width="150" height="200">
+            <img src="{{address}}" alt="暂无图片" width="150" height="200">
         </li>
         <li class="list_group right">
             <span class="pull_left">姓名</span>
-            <span>陈奕晓</span>
+            <span>{{ user.name }}</span>
         </li>
         <li class="list_group right">
             <span class="pull_left">性别</span>
-            <span>男</span>
+            <span>{{ user.gender }}</span>
         </li>
         <li class="list_group right">
             <span class="pull_left">身份证</span>
-            <span>1234567890</span>
+            <span>{{ user.id_card }}</span>
         </li>
         <li class="list_group right">
             <span class="pull_left">员工号</span>
-            <span>PB20111684</span>
+            <span>{{ user.id }}</span>
         </li>
         <li class="list_group right">
             <span class="pull_left">排班</span>
-            <span>早</span>
+            <span>{{ user.schedule }}</span>
         </li>
         <li class="list_group right">
             <span class="pull_left">手机号</span>
-            <span>13771161706</span>
+            <span>{{ user.phone }}</span>
         </li>
         <li class="list_group right">
             <span class="pull_left">负责公寓</span>
-            <span>1栋</span>
+            <span>{{ user.apartment_id }}</span>
         </li>
     </ul>
 </div>

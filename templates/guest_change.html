@@ -14,38 +14,34 @@
   <div class="card-header">
     <div class="log">修改访客</div>
   </div>
-  <form action="#" method="post">
-    <div class="form-group">
-      <label for="ID_card">身份证:</label>
-      <input value="" required="" name="ID_card" id="ID_card" type="text">
-    </div>
+  <form action="/guest_change/{{id_card}}" method="post">
     <div class="form-group">
       <label for="name">姓名:</label>
-      <input value="" required="" name="name" id="name" type="text">
+      <input value="{{user.name}}" required="" name="name" id="name" type="text">
     </div>
     <div class="form-group">
       <label for="category">身份:</label>
-      <input value="" required="" name="category" id="category" type="text">
+      <input value="{{user.identity}}" required="" name="category" id="category" type="text">
     </div>
     <div class="form-group">
       <label for="cell_phone_number">手机号:</label>
-      <input value="" required="" name="cell_phone_number" id="cell_phone_number" type="text">
+      <input value="{{user.phone}}" required="" name="cell_phone_number" id="cell_phone_number" type="text">
     </div>
     <div class="form-group">
       <label for="purpose">目的:</label>
-      <input value="" required="" name="purpose" id="purpose" type="text">
+      <input value="{{user.purpose}}" required="" name="purpose" id="purpose" type="text">
     </div>
     <div class="form-group">
       <label for="target_room">目的宿舍号:</label>
-      <input value="" required="" name="target_room" id="target_room" type="text">
+      <input value="{{user.target_room}}" required="" name="target_room" id="target_room" type="text">
     </div>
     <div class="form-group">
       <label for="target_apartment">目的公寓号:</label>
-      <input value="" required="" name="target_apartment" id="target_apartment" type="text">
+      <input value="{{user.target_apartment}}" required="" name="target_apartment" id="target_apartment" type="text">
     </div>
     <div class="form-group">
       <label for="departure_time">离开时间:</label>
-      <input value="" required="" name="departure_time" id="departure_time" type="text">
+      <input value="{{user.departure_time}}" name="departure_time" id="departure_time" type="date">
     </div>
     <div class="form-group">
       <input value="提交" type="submit">

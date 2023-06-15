@@ -13,23 +13,19 @@
   <div class="card-header">
     <div class="log">修改档案</div>
   </div>
-  <form method="post" action="#">
-    <div class="form-group">
-      <label for="class">班级:</label>
-      <input value="" required="" name="class" id="class" type="text">
-    </div>
+  <form action="/admin_change_student/{{stu_id}}" method="post">
     <div class="form-group">
       <label for="apartment">公寓:</label>
-      <input value="" required="" name="apartment" id="apartment" type="text">
+      <input value="{{user.apartment_id}}" required="" name="apartment" id="apartment" type="text">
     </div>
     <div class="form-group">
       <label for="room">宿舍:</label>
-      <input value="" required="" name="room" id="room" type="text">
+      <input value="{{user.room_id}}" required="" name="room" id="room" type="text">
     </div>
 <!--  改成下拉菜单？  -->
     <div class="form-group">
       <label for="state">状态:</label>
-      <input value="" required="" name="state" id="state" type="text">
+      <input value="{{user.state}}" required="" name="state" id="state" type="text">
     </div>
     <div class="form-group">
       <input value="提交" type="submit">

@@ -15,34 +15,42 @@
         <li class="list_group left">宿舍信息</li>
         <li class="list_group right">
             <span class="pull_left">宿舍号</span>
-            <span>402</span>
+            <span>{{room_id}}</span>
         </li>
         <li class="list_group right">
-            <span class="pull_left">社长</span>
-            <span>陈奕晓</span>
+            <span class="pull_left">公寓号</span>
+            <span>{{room_record.apartment_id}}</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">寝室长</span>
+            <span>{{room_record.president}}</span>
+        </li>
+        <li class="list_group right">
+            <span class="pull_left">容量</span>
+            <span>{{room_record.capacity}}</span>
         </li>
         <li class="list_group right">
             <span class="pull_left">学生1</span>
-            <span>A</span>
+            <span>{{stu_list[0]}}</span>
         </li>
         <li class="list_group right">
             <span class="pull_left">学生2</span>
-            <span>B</span>
+            <span>{{stu_list[1]}}</span>
         </li>
         <li class="list_group right">
             <span class="pull_left">学生3</span>
-            <span>C</span>
+            <span>{{stu_list[2]}}</span>
         </li>
         <li class="list_group right">
             <span class="pull_left">学生4</span>
-            <span>D</span>
+            <span>{{stu_list[3]}}</span>
         </li>
         <li class="list_group right">
             <span class="pull_left">状态</span>
-            <span>正常</span>
+            <span>{{room_record.maintenance_status}}</span>
         </li>
     </ul>
-    <form class="bottom-list" action="/room_change/{{index}}">
+    <form class="bottom-list" action="/room_change/{{room_id}}">
     <!-- 按钮按了之后操作待做 -->
     <button>修改</button>
     </form>

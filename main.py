@@ -1,9 +1,9 @@
 from flask import Flask, request, render_template, redirect, url_for, session
 from mylib import *
 
-
 app = Flask(__name__)
 app.secret_key = 'hello'
+
 
 # 初始化未登录
 @app.before_request
@@ -57,6 +57,11 @@ def login():
     return render_template('login.html')
 
 
+"""
+======================================================== Student page =================================================
+"""
+
+
 # 需要参数为username和identity，用以表示身份和姓名
 @app.route('/student_home')
 def student_home():
@@ -85,9 +90,13 @@ def student_file():
     record = get_student_info(ID)
     user = Student(record)
 
-    with open("./static/image/student_head/" + ID + ".jpg", 'wb') as f:
-        f.write(user.photo)
-    address = "/static/image/student_head/" + ID + ".jpg"
+    try:
+        with open("./static/image/student_head/" + ID + ".jpg", 'wb') as f:
+            f.write(user.photo)
+        address = "/static/image/student_head/" + ID + ".jpg"
+    except Exception:
+        address = ""
+
     return render_template('student_file.html', username=username,
                            identity=identity, user=user, address=address)
 
@@ -109,7 +118,6 @@ def student_change():
         email = request.form.get('email')
         password = request.form.get('password')
         photo = request.files.get('head')
-        # print(photo)
         if photo.filename != '':
             photo.save("./static/image/student_head/" + ID + ".jpg")
             with open("./static/image/student_head/" + ID + ".jpg", 'rb') as f:
@@ -124,10 +132,6 @@ def student_change():
 
         update_student_info(ID, cell_phone_number, email, password, photo_data)
 
-        # record = get_student_info(ID)
-        # photo_data = record[-1]
-        # with open("./read.jpg", 'wb') as f:
-        #     f.write(photo_data)
         return redirect('/student_file')
 
     return render_template('student_change.html', username=username
@@ -154,11 +158,13 @@ def maintenance_request():
 
         report_maintenance(ID, description, photo_data)
 
+        return redirect('/student_home')
+
     return render_template('maintenance_request.html', username=username, identity=identity)
 
 
 # 示例用类
-class Record_for_show:
+class Maintenance_record_for_show:
     def __init__(self, time, reporter, status, address):
         self.content = "申请时间：" + str(time) + "  申请人：" + reporter + "  状态：" + status
         self.address = address
@@ -174,17 +180,17 @@ def maintenance_show():
     identity = session['identity']
     ID = session['ID']
 
-    records_for_show = []        # 这个列表里存放 Record_for_show 类
+    records_for_show = []  # 这个列表里存放 Record_for_show 类
     if identity == "学生":
-        records = get_stu_view_records(ID)      # records 是完整的记录列表, 其中存放Record类
+        records = get_stu_view_records(ID)  # records 是完整的记录列表, 其中存放Record类
         for record in records:
-            tmp = Record_for_show(record.report_time, record.reporter_name, record.status, record.id)
+            tmp = Maintenance_record_for_show(record.report_time, record.reporter_name, record.status, record.id)
             records_for_show.append(tmp)
 
     elif identity == "管理员":
         records = get_admin_view_records()  # records 是完整的记录列表, 其中存放Record类
         for record in records:
-            tmp = Record_for_show(record.report_time, record.reporter_name, record.status, record.id)
+            tmp = Maintenance_record_for_show(record.report_time, record.reporter_name, record.status, record.id)
             records_for_show.append(tmp)
 
     return render_template('maintenance_show.html', username=username, identity=identity, records=records_for_show)
@@ -220,7 +226,6 @@ def maintenance_detail(index):
                            , record=record, address=address)
 
 
-# TODO 返校申请和离校申请的类都搞定了
 @app.route('/return_school_apply', methods=['POST', 'GET'])
 def return_school_apply():
     if session['state'] is None:
@@ -229,8 +234,7 @@ def return_school_apply():
     identity = session['identity']
     ID = session['ID']
 
-    # TODO time数据固定，表单上传的是str，数据库需要datatime
-    #  需要输入为一定格式才能进行转换
+    # TODO 未测试
     if request.method == 'POST':
         description = request.form.get('description')
         return_time = request.form.get('return_time')
@@ -249,8 +253,6 @@ def leave_school_apply():
     identity = session['identity']
     ID = session['ID']
 
-    # TODO time数据格式固定，表单上传的是str，数据库需要datatime
-    #  需要输入为一定格式才能进行转换
     if request.method == 'POST':
         # example
         departure_time = request.form.get('departure_time')
@@ -265,6 +267,11 @@ def leave_school_apply():
     return render_template('leave_school_apply.html', username=username, identity=identity)
 
 
+"""
+======================================================== Admin page ===================================================
+"""
+
+
 @app.route('/administrator_home')
 def administrator_home():
     if session['state'] is None:
@@ -276,7 +283,6 @@ def administrator_home():
 
 @app.route('/IO_school_manage', methods=['POST', 'GET'])
 def IO_school_manage():
-    # TODO state表示是否已经登录
     if session['state'] is None:
         return redirect('/')
 
@@ -288,78 +294,95 @@ def IO_school_manage():
 # 用于处理入宿申请
 @app.route('/In_school', methods=['POST'])
 def In_school():
-    # TODO 通过 request.form.get 函数获取数据 然后存到数据库中 已新增户籍一栏
+    id = request.form.get('ID')
     name = request.form.get('name')
-    print('In' + name)
+    gender = request.form.get('gender')
+    birthday = request.form.get('born')
+    domicile = request.form.get('domicile')
+    classs = request.form.get('class')
+    apartment_id = request.form.get('apartment_id')
+    room_id = request.form.get('room_id')
+    college = request.form.get('college')
+    id_card = request.form.get('id_card')
+    major = request.form.get('major')
+    print(major)
+
+    check_in(id, name, gender, birthday, domicile, classs, apartment_id,
+             room_id, college, id_card, major)
+
     return redirect('/IO_school_manage')
 
 
 # 用于处理离宿申请
 @app.route('/Out_school', methods=['POST'])
 def Out_school():
-    # TODO 通过 request.form.get 函数获取数据 然后删除数据库中对应数据
-    ID = request.form.get('ID_out')
-    print('Out' + ID)
+    id = request.form.get('ID_out')
+
+    check_out(id)
+
     return redirect('/IO_school_manage')
 
 
-# TODO 需要两个list 一个是返校申请的list 一个是离校申请的list
-#  传入的数据需要有两个属性：1.想要显示的数据‘申请人学号 状态 ’ 2.在table中的编号
+class LR_school_record_for_show:
+    def __init__(self, id, room_id, apartment_id, request_id):
+        self.content = "申请人ID：" + id + " 公寓号：" + apartment_id + " 房间号：" + room_id
+        self.address = request_id
+
+
 @app.route('/LR_school_manage', methods=['POST', 'GET'])
 def LR_school_manage():
-    # TODO state表示是否已经登录
     if session['state'] is None:
         return redirect('/')
-    # 演示用
-    # records = []
-    # for i in range(0, 50):
-    #     record = Record_for_show(i, i)
-    #     records.append(record)
-    leave_school_record = [str(i) for i in range(0, 9)]
-    record = leave_school(leave_school_record)
-    records1 = [record]
-
     username = session['username']
     identity = session['identity']
-    return render_template('LR_school_manage.html', username=username, identity=identity, records1=records1)
+
+    return_requests = get_return_requests()
+    leave_requests = get_leave_requests()
+
+    return_requests_for_show = []
+    leave_requests_for_show = []
+
+    for request in return_requests:
+        return_requests_for_show.append(LR_school_record_for_show(request.student_id, request.room_id,
+                                                                  request.apartment_id, request.id))
+    for request in leave_requests:
+        leave_requests_for_show.append(LR_school_record_for_show(request.student_id, request.room_id,
+                                                                 request.apartment_id, request.id))
+
+    return render_template('LR_school_manage.html', username=username, identity=identity,
+                           records1=return_requests_for_show, records2=leave_requests_for_show)
 
 
 # 查看第index个暂离申请，因此需要第index个暂离申请类
 # 还要处理上传的修改状态
 @app.route('/leave_school_detail/<int:index>', methods=['GET', 'POST'])
 def leave_school_detail(index):
-    # TODO 若维修list不存在，index小于0或大于维修list的长度，则返回LR_school_manage界面
     if index < 0:
         return redirect('/LR_school_manage')
-
-    # TODO state表示是否已经登录
     if session['state'] is None:
         return redirect('/')
-    # TODO 通过index获取指定维修记录，并传入render_template
-    # 例子
-    leave_school_record = [str(i) for i in range(0, 9)]
-    record = leave_school(leave_school_record)
-
     username = session['username']
     identity = session['identity']
 
+    request = get_single_L_request(index)
+
     return render_template('leave_school_detail.html', username=username, identity=identity,
-                           record=record)
+                           record=request)
 
 
 # 用于通过离校申请
 @app.route('/agree_leave_school/<int:index>', methods=['POST'])
 def agree_leave_school(index):
-    # TODO 将第index个暂离申请的状态改为通过
-    print('agree_leave_school')
+    update_L_request_status(index, "已通过")
+
     return redirect('/LR_school_manage')
 
 
 # 用于不通过离校申请
 @app.route('/disagree_leave_school/<int:index>', methods=['POST'])
 def disagree_leave_school(index):
-    # TODO 将第index个暂离申请的状态改为不通过
-    print('disagree_leave_school')
+    update_L_request_status(index, "不通过")
+
     return redirect('/LR_school_manage')
 
 
@@ -367,242 +390,300 @@ def disagree_leave_school(index):
 # 还要处理上传的修改状态
 @app.route('/return_school_detail/<int:index>', methods=['GET', 'POST'])
 def return_school_detail(index):
-    # TODO 若list不存在，index小于0或大于list的长度，则返回LR_school_manage界面
     if index < 0:
         return redirect('/LR_school_manage')
-
-    # for example
-    return_school_record = [str(i) for i in range(0, 7)]
-    record = return_school(return_school_record)
-
-    # TODO state表示是否已经登录
     if session['state'] is None:
         return redirect('/')
-    # TODO 通过index获取指定维修记录，并传入render_template
-
     username = session['username']
     identity = session['identity']
 
+    request = get_single_R_request(index)
+
     return render_template('return_school_detail.html', username=username
-                           , identity=identity, record=record)
+                           , identity=identity, record=request)
 
 
 # 用于通过返校申请
 @app.route('/agree_return_school/<int:index>', methods=['POST'])
 def agree_return_school(index):
-    # TODO 将第index个返校申请的状态改为通过
-    print('agree_return_school')
+    update_R_request_status(index, "已通过")
+
     return redirect('/LR_school_manage')
 
 
 # 用于不通过返校申请
 @app.route('/disagree_leave_school/<int:index>', methods=['POST'])
 def disagree_return_school(index):
-    # TODO 将第index个返校申请的状态改为不通过
-    print('disagree_return_school')
+    update_R_request_status(index, "不通过")
+
     return redirect('/LR_school_manage')
 
 
 # 需要管理员类（给输入框初始值）
 @app.route('/administrator_change', methods=['POST', 'GET'])
 def administrator_change():
-    # TODO state表示是否已经登录
     if session['state'] is None:
         return redirect('/')
-    # TODO 通过 request.form.get 函数获取数据 然后存到数据库中
-    #  request.files.get 用以获取文件
+    username = session['username']
+    identity = session['identity']
+    ID = session['ID']
+
+    record = get_admin_info(ID)
+    user = Admin(record)
+
     if request.method == 'POST':
         # example
         cell_phone_number = request.form.get('cell_phone_number')
-        head = request.files.get('head')
-        print(cell_phone_number)
+        password = request.form.get('password')
+        photo = request.files.get('head')
+
+        if photo.filename != '':
+            photo.save("./static/image/admin_head/" + ID + ".jpg")
+            with open("./static/image/admin_head/" + ID + ".jpg", 'rb') as f:
+                photo_data = f.read()
+        # 下为屎山代码 印度大厨
+        else:
+            # print('photo is none')
+            with open("./static/image/admin_head/" + ID + ".jpg", 'wb') as f:
+                f.write(user.photo)
+            with open("./static/image/admin_head/" + ID + ".jpg", 'rb') as f:
+                photo_data = f.read()
+
+        update_admin_info(ID, cell_phone_number, password, photo_data)
+
         return redirect('/administrator_file')
 
-    username = session['username']
-    identity = session['identity']
-    return render_template('administrator_change.html', username=username, identity=identity)
+    return render_template('administrator_change.html', username=username, identity=identity, user=user)
 
 
-# 管理员修改学生数据 应该传入修改的哪个学生
-# 改成学号
-@app.route('/admin_change_student/<int:index>', methods=['POST', 'GET'])
-def admin_change_student(index):
-    # TODO state表示是否已经登录
+@app.route('/administrator_file')
+def administrator_file():
     if session['state'] is None:
         return redirect('/')
-    # TODO 通过 request.form.get 函数获取数据 然后存到数据库中 注意如何获取修改的是哪个学生
-    #  通过学号或者index来确定修改的哪个学生
-    if request.method == 'POST':
-        # example
-        cell_phone_number = request.form.get('cell_phone_number')
-        return redirect('/student_show')
-
     username = session['username']
     identity = session['identity']
-    return render_template('admin_change_student.html', username=username, identity=identity)
+    ID = session['ID']
+
+    record = get_admin_info(ID)
+    user = Admin(record)
+
+    try:
+        with open("./static/image/admin_head/" + ID + ".jpg", 'wb') as f:
+            f.write(user.photo)
+        address = "/static/image/admin_head/" + ID + ".jpg"
+    except Exception:
+        address = ""
+
+    return render_template('administrator_file.html', username=username, identity=identity,
+                           user=user, address=address)
 
 
-# TODO 需要一个学生类的list
-#  传入的数据需要有两个属性：1.想要显示的数据‘学号 姓名 性别’ 2.在table中的编号
+class Student_record_for_show:
+    def __init__(self, id, name, apartment_id, room_id):
+        self.content = "ID：" + id + "   姓名：" + name + "    公寓号：" + apartment_id + "    房间号：" + room_id
+        self.address = id
+
+
 @app.route('/student_show', methods=['POST', 'GET'])
 def student_show():
-    # TODO state表示是否已经登录
     if session['state'] is None:
         return redirect('/')
-    # 演示用
-    records = []
-    for i in range(0, 50):
-        record = Record_for_show(i, i)
-        records.append(record)
-
     username = session['username']
     identity = session['identity']
+
+    stu_records = get_student_list()
+    stu_records_for_show = []
+
+    for student in stu_records:
+        tmp = Student_record_for_show(student.id, student.name, student.apartment_id, student.room_id)
+        stu_records_for_show.append(tmp)
+
     return render_template('student_show.html', username=username, identity=identity,
-                           records=records[:50])
+                           records=stu_records_for_show)
 
 
-# TODO 需要一个访客list
-#  传入的数据需要有两个属性：1.想要显示的数据‘姓名 身份 目的’ 2.在table中的编号
+@app.route('/admin_change_student/<string:stu_id>', methods=['POST', 'GET'])
+def admin_change_student(stu_id):
+    if session['state'] is None:
+        return redirect('/')
+    username = session['username']
+    identity = session['identity']
+
+    record = get_student_info(stu_id)
+    user = Student(record)
+
+    if request.method == 'POST':
+        apartment_id = request.form.get('apartment')
+        room_id = request.form.get('room')
+        new_state = request.form.get('state')
+
+        admin_change_stu(stu_id, apartment_id, room_id, new_state)
+        return redirect('/student_show')
+
+    return render_template('admin_change_student.html', username=username, identity=identity,
+                           user=user, stu_id=stu_id)
+
+
+class Guest_record_for_show:
+    def __init__(self, id_card, name, arr_time, room_id, dep_time):
+        self.content = "姓名：" + name + "   到访时间：" + str(arr_time) + "    房间号：" + room_id + \
+                       "    离开时间：" + str(dep_time)
+        self.address = id_card
+
+
 @app.route('/guest_show')
 def guest_show():
-    # TODO state表示是否已经登录
     if session['state'] is None:
         return redirect('/')
-    # 演示用
-    records = []
-    for i in range(0, 50):
-        record = Record_for_show(i, i)
-        records.append(record)
-
     username = session['username']
     identity = session['identity']
+
+    guest_records = get_visitor_list()
+    guest_records_for_show = []
+
+    for guest in guest_records:
+        tmp = Guest_record_for_show(guest.id_card, guest.name, guest.arrive_time, guest.target_room,
+                                    guest.departure_time)
+        guest_records_for_show.append(tmp)
+
     return render_template('guest_show.html', username=username, identity=identity,
-                           records=records[:50])
+                           records=guest_records_for_show)
 
 
 # 查看第index个访客，因此需要第index个访客类
-@app.route('/guest_detail/<int:index>', methods=['GET', 'POST'])
-def guest_detail(index):
-    # TODO 若list不存在，index小于0或大于维修list的长度，则返回LR_school_manage界面
-    if index < 0:
-        return redirect('/LR_school_manage')
-
-    # TODO state表示是否已经登录
+@app.route('/guest_detail/<string:id_card>', methods=['GET', 'POST'])
+def guest_detail(id_card):
     if session['state'] is None:
         return redirect('/')
-    # TODO 通过index获取指定访客记录，并传入render_template
-
     username = session['username']
     identity = session['identity']
 
-    return render_template('guest_detail.html', username=username, identity=identity, index=index)
+    record = get_single_visitor_record(id_card)
+
+    return render_template('guest_detail.html', username=username, identity=identity,
+                           id_card=id_card, record=record)
 
 
 # 处理登记访客
 @app.route('/guest_register', methods=['POST', 'GET'])
 def guest_register():
-    # TODO state表示是否已经登录
     if session['state'] is None:
         return redirect('/')
-
-    # TODO 通过 request.form.get 函数获取数据 然后存到数据库中
-    if request.method == 'POST':
-        # example
-        description = request.form.get('description')
-        print(description)
-        return redirect('/guest_show')
-
     username = session['username']
     identity = session['identity']
+
+    if request.method == 'POST':
+        id_card = request.form.get('ID_card')
+        name = request.form.get('name')
+        identity = request.form.get('category')
+        phone = request.form.get('cell_phone_number')
+        purpose = request.form.get('purpose')
+        target_room = request.form.get('target_room')
+        target_apartment = request.form.get('target_apartment')
+        departure_time = request.form.get('departure_time')
+
+        register_visitor(id_card, name, identity, phone, purpose, target_room,
+                         target_apartment, departure_time)
+        return redirect('/guest_show')
+
     return render_template('guest_register.html', username=username, identity=identity)
 
 
 # 处理修改访客
-@app.route('/guest_change/<int:index>', methods=['POST', 'GET'])
-def guest_change(index):
-    # TODO state表示是否已经登录
+@app.route('/guest_change/<string:id_card>', methods=['POST', 'GET'])
+def guest_change(id_card):
     if session['state'] is None:
         return redirect('/')
+    username = session['username']
+    identity = session['identity']
 
-    # TODO 通过 request.form.get 函数获取数据 然后存到数据库中
+    user = get_single_visitor_record(id_card)
+
     if request.method == 'POST':
-        # example
-        description = request.form.get('description')
-        print(description)
+        name = request.form.get('name')
+        identity = request.form.get('category')
+        phone = request.form.get('cell_phone_number')
+        purpose = request.form.get('purpose')
+        target_room = request.form.get('target_room')
+        target_apartment = request.form.get('target_apartment')
+        departure_time = request.form.get('departure_time')
+
+        update_visitor(id_card, name, identity, phone, purpose, target_room,
+                       target_apartment, departure_time)
+
         return redirect('/guest_show')
 
-    username = session['username']
-    identity = session['identity']
-    return render_template('guest_change.html', username=username, identity=identity)
+    return render_template('guest_change.html', username=username, identity=identity, id_card=id_card, user=user)
 
 
-# TODO 需要一个宿舍类的list
+class Room_record_for_show:
+    def __init__(self, room_id, president, maintenance_status, stu_num):
+        if president == None:
+            president = "空"
+        self.content = "ID：" + room_id + "   寝室长：" + president + "    维修状态：" + maintenance_status + \
+                           "    学生数：" + str(stu_num)
+        self.address = room_id
+
+
 @app.route('/room_show', methods=['POST', 'GET'])
 def room_show():
-    # TODO state表示是否已经登录
     if session['state'] is None:
         return redirect('/')
-    # 演示用
-    records = []
-    for i in range(0, 50):
-        record = Record_for_show(i, i)
-        records.append(record)
-
     username = session['username']
     identity = session['identity']
+
+    room_records = get_room_list()
+    room_records_for_show = []
+
+    for room in room_records:
+        tmp = Room_record_for_show(room.room_id, room.president, room.maintenance_status,
+                                   room.stu_num)
+        room_records_for_show.append(tmp)
+
     return render_template('room_show.html', username=username, identity=identity,
-                           records=records[:50])
+                           records=room_records_for_show)
 
 
 # 查看第index个宿舍，因此需要第index个宿舍类
-@app.route('/room_detail/<int:index>', methods=['GET', 'POST'])
-def room_detail(index):
-    # TODO 若list不存在，index小于0或大于list的长度，则返回界面
-    if index < 0:
-        return redirect('/room_show')
-
-    # TODO state表示是否已经登录
+@app.route('/room_detail/<string:room_id>', methods=['GET', 'POST'])
+def room_detail(room_id):
     if session['state'] is None:
         return redirect('/')
-    # TODO 通过index获取指定访客记录，并传入render_template
-
     username = session['username']
     identity = session['identity']
 
+    room_record = get_single_room_record(room_id)
+    stu_list = get_student_in_room(room_id, room_record.apartment_id)
+
     return render_template('room_detail.html', username=username
-                           , identity=identity, index=index)
+                           , identity=identity, room_id=room_id,
+                           room_record=room_record, stu_list=stu_list)
 
 
 # 处理修改房间
-@app.route('/room_change/<int:index>', methods=['POST', 'GET'])
-def room_change(index):
-    # TODO state表示是否已经登录
+@app.route('/room_change/<string:room_id>', methods=['POST', 'GET'])
+def room_change(room_id):
     if session['state'] is None:
         return redirect('/')
+    username = session['username']
+    identity = session['identity']
 
-    # TODO 通过 request.form.get 函数获取数据 然后存到数据库中
+    room_record = get_single_room_record(room_id)
+
     if request.method == 'POST':
-        # example
-        description = request.form.get('description')
-        print(description)
+        new_president = request.form.get('housemaster')
+
+        update_room_president(room_id, room_record.apartment_id, new_president)
+
         return redirect('/room_show')
 
-    username = session['username']
-    identity = session['identity']
-    return render_template('room_change.html', username=username, identity=identity)
-
-
-@app.route('/administrator_file')
-def administrator_file():
-    # TODO state表示是否已经登录
-    if session['state'] is None:
-        return redirect('/')
-
-    username = session['username']
-    identity = session['identity']
-    return render_template('administrator_file.html', username=username, identity=identity)
+    return render_template('room_change.html', username=username, identity=identity,
+                           room_record=room_record, room_id=room_id)
 
 
 # 按间距中的绿色按钮以运行脚本。
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
+
+# TODO 学生的返校离校状态变化
+#      没有上传照片时查看自身信息会报错
