@@ -93,26 +93,6 @@ END; //
 DELIMITER ;
 
 DELIMITER //
-CREATE TRIGGER update_occupancy 
-AFTER UPDATE ON Student
-FOR EACH ROW
-BEGIN
-    -- 如果宿舍ID改变
-    IF NEW.room_id != OLD.room_id OR NEW.apartment_id != OLD.apartment_id THEN
-        -- 在旧宿舍将occupied人数减1
-        UPDATE Room 
-        SET occupied = occupied - 1
-        WHERE id = OLD.room_id AND apartment_id = OLD.apartment_id AND occupied > 0;
-
-        -- 在新宿舍将occupied人数加1
-        UPDATE Room 
-        SET occupied = occupied + 1
-        WHERE id = NEW.room_id AND apartment_id = NEW.apartment_id AND occupied < max_occupancy;
-    END IF;
-END; //
-DELIMITER ;
-
-DELIMITER //
 CREATE TRIGGER update_student_state_after_return_approval
 AFTER UPDATE ON ReturnApplication
 FOR EACH ROW
