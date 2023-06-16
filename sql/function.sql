@@ -1,8 +1,5 @@
 DELIMITER //
-CREATE PROCEDURE check_in(IN student_id VARCHAR(20), IN student_name VARCHAR(50), 
-IN student_gender VARCHAR(10), IN student_born VARCHAR(50), IN student_class VARCHAR(50), 
-IN student_college VARCHAR(100), IN student_id_card VARCHAR(50), IN student_domicile VARCHAR(100), 
-IN student_phone VARCHAR(15), IN student_email VARCHAR(100), IN student_major VARCHAR(100), IN ro_id VARCHAR(20), IN apart_id VARCHAR(20))
+CREATE PROCEDURE check_in(IN student_id VARCHAR(20), IN student_name VARCHAR(50), IN student_gender VARCHAR(10), IN student_born VARCHAR(50), IN student_class VARCHAR(50), IN student_college VARCHAR(100), IN student_id_card VARCHAR(50), IN student_domicile VARCHAR(100), IN student_phone VARCHAR(15), IN student_email VARCHAR(100), IN student_major VARCHAR(100), IN ro_id VARCHAR(20), IN apart_id VARCHAR(20))
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
@@ -11,10 +8,7 @@ BEGIN
     END;
 
     START TRANSACTION;
-    INSERT INTO Student (id, name, gender, born, class, college, id_card, domicile, phone, email, major, 
-						 room_id, apartment_id, password, state) VALUES (student_id, student_name, student_gender, 
-						student_born, student_class, student_college, student_id_card, student_domicile, student_phone, 
-                         student_email, student_major, ro_id, apart_id, RIGHT(student_id_card, 6), 1);
+    INSERT INTO Student (id, name, gender, born, class, college, id_card, domicile, phone, email, major, room_id, apartment_id, password, state) VALUES (student_id, student_name, student_gender, student_born, student_class, student_college, student_id_card, student_domicile, student_phone, student_email, student_major, ro_id, apart_id, RIGHT(student_id_card, 6), 1);
     COMMIT;
 END //
 DELIMITER ;
@@ -37,8 +31,7 @@ DELIMITER ;
 DELIMITER //
 CREATE PROCEDURE get_student_info(IN student_id VARCHAR(20))
 BEGIN
-    SELECT id, name, gender, born, class, apartment_id, room_id, college, id_card, domicile, phone, email, major, password, state, 
-     photo FROM Student WHERE id = student_id;
+    SELECT id, name, gender, born, class, apartment_id, room_id, college, id_card, domicile, phone, email, major, password, state, photo FROM Student WHERE id = student_id;
 END //
 DELIMITER ;
 
@@ -174,7 +167,7 @@ DELIMITER ;
 DELIMITER //
 CREATE PROCEDURE GetStudentsInRoom(IN given_room_id VARCHAR(20), IN given_apartment_id VARCHAR(20))
 BEGIN
-    SELECT name AS student_name
+    SELECT id AS student_id, name AS student_name
     FROM Student
     WHERE room_id = given_room_id AND apartment_id = given_apartment_id;
 END //
@@ -290,7 +283,7 @@ END //
 DELIMITER ;
 
 DELIMITER //
-CREATE PROCEDURE get_leave_applications(IN student_id_in VARCHAR(20))
+CREATE PROCEDURE get_leave_applications()
 BEGIN
     SELECT 
         LeaveApplication.id, 
@@ -307,14 +300,12 @@ BEGIN
     FROM 
         LeaveApplication
     JOIN 
-        Student ON LeaveApplication.student_id = Student.id
-    WHERE 
-        LeaveApplication.student_id = student_id_in;
+        Student ON LeaveApplication.student_id = Student.id;
 END //
 DELIMITER ;
 
 DELIMITER //
-CREATE PROCEDURE get_return_applications(IN student_id_in VARCHAR(20))
+CREATE PROCEDURE get_return_applications()
 BEGIN
     SELECT 
         ReturnApplication.id, 
@@ -324,13 +315,12 @@ BEGIN
         ReturnApplication.room_id, 
         ReturnApplication.apartment_id, 
         ReturnApplication.return_time, 
+        ReturnApplication.purpose,
         ReturnApplication.approval_status
     FROM 
         ReturnApplication
     JOIN 
-        Student ON ReturnApplication.student_id = Student.id
-    WHERE 
-        ReturnApplication.student_id = student_id_in;
+        Student ON ReturnApplication.student_id = Student.id;
 END //
 DELIMITER ;
 
@@ -342,13 +332,13 @@ BEGIN
         Maintenance.room_id, 
         Maintenance.apartment_id, 
         Maintenance.reporter_id, 
+        Student.name AS reporter_name, 
         Maintenance.fault_info, 
         Maintenance.approval_status, 
         Maintenance.person_in_charge, 
         Maintenance.application_time, 
         Maintenance.completion_time,
-        MaintenancePhotos.photo,
-        Student.name AS reporter_name
+        MaintenancePhotos.photo
     FROM 
         Maintenance
     JOIN 
